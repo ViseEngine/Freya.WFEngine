@@ -1,0 +1,13 @@
+
+*.suo
+/Freya.WFEngine/bin
+/Freya.WFEngine/obj
+/Freya.WFEngine.Tests
+/Freya.WFEngine.ItemTest
+/Freya.WFEngine.NinjectAdapter/bin
+/Freya.WFEngine.NinjectAdapter/obj
+/Freya.WFEngine.TestApp/bin
+/Freya.WFEngine.TestApp/obj
+/_ReSharper.Freya.WFEngine
+/Freya.WFEngine.VisualState.xml
+/TestResult.xml
