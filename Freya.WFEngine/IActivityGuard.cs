@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Freya.WFEngine
+{
+    public interface IActivityGuard<TItem> 
+    {
+        void Check(Workflow<TItem> workflow, ActivityDescriptor activity, TItem item, string currentState);
+    }
+}

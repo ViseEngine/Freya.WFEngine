@@ -17,6 +17,8 @@ namespace Freya.WFEngine
             this.proxyGenerator = new ProxyGenerator();
         }
 
+        readonly ProxyGenerationOptions proxyGenerationOptions = new ProxyGenerationOptions(ActivityProxyGenerationHook.DefaultInstance);
+
         protected internal IStateManager<TItem> StateManager { get; private set; }
 
         private readonly ProxyGenerator proxyGenerator;
@@ -50,14 +52,25 @@ namespace Freya.WFEngine
         public IEnumerable<IActivity> GetActivitiesForItem(TItem item) {
             string currentState = this.StateManager.GetCurrentState(item);
             IEnumerable<ActivityDescriptor> activityDescriptors = this.activities[currentState];
-            ProxyGenerationOptions options = new ProxyGenerationOptions(ActivityProxyGenerationHook.DefaultInstance);
 
-            foreach (var ad in activityDescriptors) {
-                IActivity baseActivity = this.ActivityFactory.CreateActivity(item, ad);
-                var interceptor = new StateChangeActivityInterceptor<TItem>(this, ad.ExitPointMapping, item);
-                Type[] additionalInterfaces = baseActivity.GetType().GetInterfaces();
-                yield return (IActivity) proxyGenerator.CreateInterfaceProxyWithTarget(typeof (IActivity), additionalInterfaces, baseActivity, options, new IInterceptor[] { interceptor });
-            }
+            return activityDescriptors.Select(ad => CreateActivity(ad, item));
         }
+
+        private IActivity CreateActivity(ActivityDescriptor activityDescriptor, TItem item) {
+            IActivity baseActivity = this.ActivityFactory.CreateActivity(item, activityDescriptor);
+            var interceptor = new StateChangeActivityInterceptor<TItem>(this, activityDescriptor.ExitPointMapping, item);
+            Type[] additionalInterfaces = baseActivity.GetType().GetInterfaces();
+            return (IActivity)proxyGenerator.CreateInterfaceProxyWithTarget(typeof(IActivity), additionalInterfaces, baseActivity, proxyGenerationOptions, new IInterceptor[] { interceptor });
+        }
+
+        public void ValidateInvocation(TItem item, IActivity activity) {
+            string itemState = this.StateManager.GetCurrentState(item);
+            ActivityDescriptor activityDescriptor = this.activities[itemState].SingleOrDefault(ad => ad.Name == activity.Name);
+
+            if (activityDescriptor == null)
+                throw new Exception();
+        }
+
+        
     }
 }

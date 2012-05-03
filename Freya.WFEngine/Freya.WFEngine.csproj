@@ -58,6 +58,7 @@
     <Compile Include="ExitPointAttribute.cs" />
     <Compile Include="IActivity.cs" />
     <Compile Include="IActivityFactory.cs" />
+    <Compile Include="IActivityGuard.cs" />
     <Compile Include="InvocationMethodAttribute.cs" />
     <Compile Include="IStateManager.cs" />
     <Compile Include="ITransitionActivity.cs" />

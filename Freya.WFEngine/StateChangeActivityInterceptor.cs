@@ -25,6 +25,8 @@ namespace Freya.WFEngine
         private readonly IDictionary<string, string> exitPointMapping; 
 
         public void Intercept(IInvocation invocation) {
+            this.workflow.ValidateInvocation(this.item, (IActivity) invocation.InvocationTarget);
+
             invocation.Proceed();
             string result = (string) invocation.ReturnValue;
             string exitState = exitPointMapping[result];

@@ -52,6 +52,9 @@ namespace Freya.WFEngine.TestApp
             activity.Invoke();
             
             Console.WriteLine("Current state: {0}", i1.CurrentState);
+
+            activity.Invoke();
+            
             Console.ReadKey();
         }
     }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    public abstract class Activity<TItem> : Activity
+    public abstract class Activity<TItem> : Activity, IActivity<TItem>
     {
         public TItem Item { get; set; }
     }

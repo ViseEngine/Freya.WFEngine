@@ -11,4 +11,9 @@ namespace Freya.WFEngine
 
         string Name { get; set; }
     }
+
+    public interface IActivity<TItem> : IActivity
+    {
+        TItem Item { get; set; }
+    }
 }
