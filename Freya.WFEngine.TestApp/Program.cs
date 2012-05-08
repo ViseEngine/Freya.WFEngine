@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace Freya.WFEngine.TestApp
 {
@@ -28,24 +29,16 @@ namespace Freya.WFEngine.TestApp
         static void Main(string[] args)
         {
             Workflow<Item> workflow = new Workflow<Item>(new DummyStateManager());
-            const string firstStateName = "first";
-            const string secondStateName = "second";
-            workflow.AddState(firstStateName);
-            workflow.AddState(secondStateName);
+            XmlConfigurator xmlConfigurator = new XmlConfigurator();
+            xmlConfigurator.AddXml(Resources.Sample);
+            xmlConfigurator.Configure(workflow);
 
-            ActivityDescriptor toSecondAD = new ActivityDescriptor("toSecond", typeof(TransitionActivity));
-            toSecondAD.ExitPointMapping.Add(Activity.DefaultExitPoint, secondStateName);
-            workflow.AddActivity(firstStateName, toSecondAD);
 
-            ActivityDescriptor toFirstAD = new ActivityDescriptor("toFirst", typeof(TransitionActivity));
-            toFirstAD.ExitPointMapping.Add(Activity.DefaultExitPoint, firstStateName);
-            workflow.AddActivity(secondStateName, toFirstAD);
-
-            Item i1 = new Item() { ID = 1, CurrentState = firstStateName };
+            Item i1 = new Item() { ID = 1, CurrentState = "First" };
             IActivity[] activities = workflow.GetActivitiesForItem(i1).ToArray();
             workflow.GetActivitiesForItem(i1).ToArray();
             foreach (var act in activities) {
-                Console.WriteLine("Available activity {0}", act.Name);
+                Console.WriteLine("Available activity {0}", act.Context.Name);
             }
 
             ITransitionActivity activity = activities.Cast<ITransitionActivity>().Single();

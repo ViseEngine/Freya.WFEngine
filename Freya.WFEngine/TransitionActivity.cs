@@ -5,11 +5,22 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    [ExitPoint(DefaultExitPoint)]
     public class TransitionActivity : Activity, ITransitionActivity
     {
+        public TransitionActivity(string exitState) {
+            if (exitState == null)
+                throw new ArgumentNullException("exitState");
+
+            this.ExitState = exitState;
+        }
+
+        public string ExitState {
+            get;
+            private set;
+        }
+
         public virtual string Invoke() {
-            return DefaultExitPoint;
+            return this.ExitState;
         }
     }
 }

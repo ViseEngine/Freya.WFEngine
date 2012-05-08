@@ -12,20 +12,15 @@ namespace Freya.WFEngine
 
     public abstract class Activity : IActivity
     {
+        private ActivityContext context;
 
-        public const string DefaultExitPoint = "Default";
-
-        private string name;
-        public string Name {
-            get { return this.name; }
+        public ActivityContext Context {
+            get { return this.context; }
             set {
                 if (value == null)
                     throw new ArgumentNullException("value");
 
-                if (value.Length == 0)
-                    throw new ArgumentException("Name cannot be an empty string.", "value");
-
-                this.name = value;
+                this.context = value;
             }
         }
 

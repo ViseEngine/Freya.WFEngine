@@ -9,7 +9,7 @@ namespace Freya.WFEngine
     {
         IActivity BaseActivity { get; }
 
-        string Name { get; set; }
+        ActivityContext Context { get; set; }
     }
 
     public interface IActivity<TItem> : IActivity

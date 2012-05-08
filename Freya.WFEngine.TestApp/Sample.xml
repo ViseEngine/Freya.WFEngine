@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Workflow>
+  <Activities>
+    <Add name="TransitionActivity" type="Freya.WFEngine.TransitionActivity, Freya.WFEngine" />
+  </Activities>
+  <Guards>
+    <Add name="RoleGuard" type="Scio.CIS.RoleGuard, Scio.CIS" />
+  </Guards>
+  <States>
+    <State name="First">
+      <TransitionActivity exitState="Second" name="firstActivity" />
+    </State>
+    
+    <State name="Second">
+      <TransitionActivity exitState="First">
+        <RoleGuard roles="author;guarantee" />    
+      </TransitionActivity>
+    </State>
+    
+  </States>
+</Workflow>

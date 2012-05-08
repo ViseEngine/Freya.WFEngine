@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using Castle.DynamicProxy;
 
 namespace Freya.WFEngine
@@ -13,7 +14,8 @@ namespace Freya.WFEngine
                 throw new ArgumentNullException("stateManager");
 
             this.StateManager = stateManager;
-            this.activityFactory = new DefaultActivityFactory<TItem>();
+            this.xmlActivityFactory = new CompositeXmlActivityFactory();
+            ((CompositeXmlActivityFactory) this.xmlActivityFactory).Register(new TransitionActivityFactory());
             this.proxyGenerator = new ProxyGenerator();
         }
 
@@ -23,53 +25,67 @@ namespace Freya.WFEngine
 
         private readonly ProxyGenerator proxyGenerator;
 
-        private IActivityFactory<TItem> activityFactory;
-        public IActivityFactory<TItem> ActivityFactory
+        private IXmlActivityFactory xmlActivityFactory;
+        public IXmlActivityFactory XmlActivityFactory
         {
-            get { return this.activityFactory; }
+            get { return this.xmlActivityFactory; }
 
             set {
                 if (value == null)
                     throw new ArgumentNullException("value");
 
-                this.activityFactory = value;
+                this.xmlActivityFactory = value;
             }
         }
 
-        private readonly IDictionary<string, List<ActivityDescriptor>> activities = new Dictionary<string, List<ActivityDescriptor>>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, List<ActivityRegistration>> activities = new Dictionary<string, List<ActivityRegistration>>(StringComparer.InvariantCultureIgnoreCase);
+        
 
-        public void AddState(string stateName) {
-            activities.Add(stateName, new List<ActivityDescriptor>());
+        public bool AddState(string stateName) {
+            if (this.activities.ContainsKey(stateName) == false) {
+                this.activities.Add(stateName, new List<ActivityRegistration>());
+                return true;
+            }
+
+            return false;
         }
 
-        public void AddActivity(string stateName, ActivityDescriptor activity) {
-            if (activities.ContainsKey(stateName) == false)
-                AddState(stateName);
+        public void AddActivity(string state, Type activityType, XmlElement configuration, string activityName = null) {
+            // check fox duplicit names
+            if (this.activities[state].Any(r => r.Name == activityName))
+#warning exception type fix
+                throw new Exception();
 
-            activities[stateName].Add(activity);
+            ActivityRegistration ar = new ActivityRegistration
+            {
+                Configuration = (XmlElement)configuration.CloneNode(true),
+                Name = activityName,
+                Type = activityType
+            };
+
+            this.activities[state].Add(ar);
         }
 
         public IEnumerable<IActivity> GetActivitiesForItem(TItem item) {
             string currentState = this.StateManager.GetCurrentState(item);
-            IEnumerable<ActivityDescriptor> activityDescriptors = this.activities[currentState];
-
-            return activityDescriptors.Select(ad => CreateActivity(ad, item));
+            return this.activities[currentState].Select(activityRegistration => CreateActivity(activityRegistration, item, currentState));
         }
 
-        private IActivity CreateActivity(ActivityDescriptor activityDescriptor, TItem item) {
-            IActivity baseActivity = this.ActivityFactory.CreateActivity(item, activityDescriptor);
-            var interceptor = new StateChangeActivityInterceptor<TItem>(this, activityDescriptor.ExitPointMapping, item);
+        private IActivity CreateActivity(ActivityRegistration activityRegistration, TItem item, string currentState) {
+            IActivity baseActivity = this.XmlActivityFactory.CreateActivity(activityRegistration.Type, activityRegistration.Configuration);
+            baseActivity.Context = new ActivityContext {
+                                                              Item = item,
+                                                              State = currentState,
+                                                              Name = activityRegistration.Name
+                                                          };
+
+            var interceptor = new StateChangeActivityInterceptor<TItem>(this, item);
             Type[] additionalInterfaces = baseActivity.GetType().GetInterfaces();
+            
             return (IActivity)proxyGenerator.CreateInterfaceProxyWithTarget(typeof(IActivity), additionalInterfaces, baseActivity, proxyGenerationOptions, new IInterceptor[] { interceptor });
         }
 
-        public void ValidateInvocation(TItem item, IActivity activity) {
-            string itemState = this.StateManager.GetCurrentState(item);
-            ActivityDescriptor activityDescriptor = this.activities[itemState].SingleOrDefault(ad => ad.Name == activity.Name);
-
-            if (activityDescriptor == null)
-                throw new Exception();
-        }
+        
 
         
     }

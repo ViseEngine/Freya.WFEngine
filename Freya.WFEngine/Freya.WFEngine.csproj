@@ -49,23 +49,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity.cs" />
-    <Compile Include="ActivityDescriptor.cs" />
+    <Compile Include="ActivityContext.cs" />
     <Compile Include="ActivityProxyGenerationHook.cs" />
+    <Compile Include="ActivityRegistration.cs" />
     <Compile Include="Compatibility\ITuple.cs" />
     <Compile Include="Compatibility\Tuple.cs" />
     <Compile Include="Compatibility\Tuple2.cs" />
-    <Compile Include="DefaultActivityFactory.cs" />
-    <Compile Include="ExitPointAttribute.cs" />
+    <Compile Include="CompositeXmlActivityFactory.cs" />
     <Compile Include="IActivity.cs" />
+    <Compile Include="IActivityConfiguration.cs" />
     <Compile Include="IActivityFactory.cs" />
-    <Compile Include="IActivityGuard.cs" />
+    <Compile Include="IXmlActivityFactory.cs" />
     <Compile Include="InvocationMethodAttribute.cs" />
     <Compile Include="IStateManager.cs" />
     <Compile Include="ITransitionActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SR.cs" />
     <Compile Include="StateChangeActivityInterceptor.cs" />
     <Compile Include="TransitionActivity.cs" />
+    <Compile Include="TransitionActivityFactory.cs" />
     <Compile Include="Workflow.cs" />
+    <Compile Include="XmlConfigurator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Sample.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
