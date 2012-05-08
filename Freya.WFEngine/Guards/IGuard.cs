@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    interface IActivityConfiguration
+    public interface IGuard<TItem>
     {
-
+        bool Check(TItem item);
     }
 }

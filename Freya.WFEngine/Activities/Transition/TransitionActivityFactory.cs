@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    public class TransitionActivityFactory : IXmlActivityFactory
+    public class TransitionActivityFactory : IXmlComponentFactory<IActivity>
     {
-        public IActivity CreateActivity(Type activityType, System.Xml.XmlElement configuration)
+        public IActivity CreateComponent(Type activityType, System.Xml.XmlElement configuration)
         {
             if (activityType != typeof(TransitionActivity))
                 throw new NotSupportedException();

@@ -48,26 +48,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activity.cs" />
+    <Compile Include="Activities\Activity.cs" />
     <Compile Include="ActivityContext.cs" />
     <Compile Include="ActivityProxyGenerationHook.cs" />
     <Compile Include="ActivityRegistration.cs" />
     <Compile Include="Compatibility\ITuple.cs" />
     <Compile Include="Compatibility\Tuple.cs" />
     <Compile Include="Compatibility\Tuple2.cs" />
-    <Compile Include="CompositeXmlActivityFactory.cs" />
-    <Compile Include="IActivity.cs" />
-    <Compile Include="IActivityConfiguration.cs" />
-    <Compile Include="IActivityFactory.cs" />
-    <Compile Include="IXmlActivityFactory.cs" />
+    <Compile Include="CompositeXmlComponentFactory.cs" />
+    <Compile Include="Activities\IActivity.cs" />
+    <Compile Include="GuardRegistration.cs" />
+    <Compile Include="Guards\Authorize\AuthorizeGuard.cs" />
+    <Compile Include="Guards\Authorize\AuthorizeGuardFactory.cs" />
+    <Compile Include="IComponentFactory.cs" />
+    <Compile Include="Guards\IGuard.cs" />
     <Compile Include="InvocationMethodAttribute.cs" />
     <Compile Include="IStateManager.cs" />
     <Compile Include="ITransitionActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.cs" />
     <Compile Include="StateChangeActivityInterceptor.cs" />
-    <Compile Include="TransitionActivity.cs" />
-    <Compile Include="TransitionActivityFactory.cs" />
+    <Compile Include="Activities\Transition\TransitionActivity.cs" />
+    <Compile Include="Activities\Transition\TransitionActivityFactory.cs" />
     <Compile Include="Workflow.cs" />
     <Compile Include="XmlConfigurator.cs" />
   </ItemGroup>

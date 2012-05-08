@@ -5,8 +5,9 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    public interface IActivityFactory
+    public interface IActivity
     {
-        bool CanHandle(Type activityType);
+        IActivity BaseActivity { get; }
+        ActivityContext Context { get; set; }
     }
 }
