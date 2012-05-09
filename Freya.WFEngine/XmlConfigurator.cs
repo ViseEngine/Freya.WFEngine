@@ -8,7 +8,30 @@ namespace Freya.WFEngine
 {
     public class XmlConfigurator
     {
-        private readonly IList<XmlElement> configurations = new List<XmlElement>(); 
+        #region Fields
+        private readonly IList<XmlElement> configurations = new List<XmlElement>();
+        private readonly IDictionary<string, Type> activityTypes = new Dictionary<string, Type>();
+        private readonly IDictionary<string, Type> guardTypes = new Dictionary<string, Type>();
+        #endregion
+
+        #region Methods
+        public void Add(XmlElement workflowConfiguration) {
+            this.configurations.Add(workflowConfiguration);
+        }
+
+        public void AddActivityDefinition(string activityNodeName, Type activityType) {
+            AddTypeDefinition(activityNodeName, activityType, this.activityTypes);
+        }
+
+        public void AddGuardDefinition(string guardNodeName, Type guardType) {
+            AddTypeDefinition(guardNodeName, guardType, this.guardTypes);
+        }
+
+        public void AddXml(string xml) {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xml);
+            this.Add(xmlDoc.DocumentElement);
+        }
 
         public void Configure<TItem>(Workflow<TItem> workflow) {
             foreach (var workflowConfiguration in configurations) {
@@ -18,21 +41,9 @@ namespace Freya.WFEngine
             }
             
         }
+        #endregion
 
-        private readonly IDictionary<string, Type> activityTypes = new Dictionary<string, Type>();
-        private readonly IDictionary<string, Type> guardTypes = new Dictionary<string, Type>();
-
-        public void Add(XmlElement workflowConfiguration)
-        {
-            this.configurations.Add(workflowConfiguration);
-        }
-
-        public void AddXml(string xml) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xml);
-            this.Add(xmlDoc.DocumentElement);
-        }
-
+        #region Helper methods
         private static void LoadTypeDefinitions(XmlNode xmlNode, IDictionary<string, Type> dictionary)
         {
             if (xmlNode == null)
@@ -44,11 +55,17 @@ namespace Freya.WFEngine
                 string typeName = node.GetAttribute("type");
 
                 Type type = Type.GetType(typeName);
-                if (dictionary.ContainsKey(name) && dictionary[name] != type)
-                    throw new InvalidOperationException(string.Format("Activity type with name '{0}' has been already registered.", name));
 
-                dictionary[name] = type;
+                AddTypeDefinition(typeName, type, dictionary);
             }
+        }
+
+        private static void AddTypeDefinition(string nodeName, Type type, IDictionary<string, Type> dictionary)
+        {
+            if (dictionary.ContainsKey(nodeName) && dictionary[nodeName] != type)
+                throw new InvalidOperationException(string.Format("Activity type with name '{0}' has been already registered.", nodeName));
+
+            dictionary[nodeName] = type;
         }
 
         private void LoadActivityDefinitions(XmlNode xmlActivities)
@@ -97,5 +114,6 @@ namespace Freya.WFEngine
                 }
             }
         }
+        #endregion
     }
 }

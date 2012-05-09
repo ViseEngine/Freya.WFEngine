@@ -10,9 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Freya.WFEngine</RootNamespace>
     <AssemblyName>Freya.WFEngine</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Activities\Activity.cs" />
     <Compile Include="Activities\IAutoTriggerActivity.cs" />
+    <Compile Include="Activities\SingleExitPointActivity.cs" />
     <Compile Include="Activities\Transition\AutoTransitionActivity.cs" />
     <Compile Include="ActivityContext.cs" />
     <Compile Include="ActivityProxyGenerationHook.cs" />

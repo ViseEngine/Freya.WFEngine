@@ -5,18 +5,9 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    public class TransitionActivity : Activity, ITransitionActivity
+    public class TransitionActivity : SingleExitPointActivity, ITransitionActivity
     {
-        public TransitionActivity(string exitState) {
-            if (exitState == null)
-                throw new ArgumentNullException("exitState");
-
-            this.ExitState = exitState;
-        }
-
-        public string ExitState {
-            get;
-            private set;
+        public TransitionActivity(string exitState) : base(exitState) {
         }
 
         public virtual string Invoke() {
