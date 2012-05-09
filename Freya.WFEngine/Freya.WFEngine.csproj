@@ -36,14 +36,17 @@
     <DefineConstants Condition=" $(DefineConstants.Contains(';NET')) ">$(DefineConstants.Remove($(DefineConstants.LastIndexOf(";NET"))));$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
+    <Reference Include="Castle.Core" Condition="$(DefineConstants.Contains('NET40'))">
       <HintPath>..\packages\Castle.Core.3.0.0.4001\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core" Condition="$(DefineConstants.Contains('NET35'))">
+      <HintPath>..\packages\Castle.Core.3.0.0.4001\lib\net35\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.CSharp" Condition="$(DefineConstants.Contains('NET40'))" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -54,8 +57,11 @@
     <Compile Include="ActivityContext.cs" />
     <Compile Include="ActivityProxyGenerationHook.cs" />
     <Compile Include="ActivityRegistration.cs" />
+    <Compile Include="Compatibility\IStructuralComparable.cs" />
+    <Compile Include="Compatibility\IStructuralEquatable.cs" />
     <Compile Include="Compatibility\ITuple.cs" />
     <Compile Include="Compatibility\Tuple.cs" />
+    <Compile Include="Compatibility\Tuple1.cs" />
     <Compile Include="Compatibility\Tuple2.cs" />
     <Compile Include="CompositeXmlComponentFactory.cs" />
     <Compile Include="Activities\IActivity.cs" />
