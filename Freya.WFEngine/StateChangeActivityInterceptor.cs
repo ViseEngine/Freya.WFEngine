@@ -20,9 +20,7 @@ namespace Freya.WFEngine
         private readonly TItem item;
 
         public void Intercept(IInvocation invocation) {
-            invocation.Proceed();
-            string exitState = (string) invocation.ReturnValue;
-            workflow.StateManager.ChangeState(item, exitState);
+            workflow.NotifyInterception(invocation, item);
         }
     }
 }

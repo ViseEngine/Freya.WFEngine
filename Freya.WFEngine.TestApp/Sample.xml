@@ -2,6 +2,7 @@
 <Workflow>
   <Activities>
     <Add name="Transition" type="Freya.WFEngine.TransitionActivity, Freya.WFEngine" />
+    <Add name="Auto" type="Freya.WFEngine.AutoTransitionActivity, Freya.WFEngine" />
     <Add name="Beep" type="Freya.WFEngine.TestApp.BeepActivity, Freya.WFEngine.TestApp" />
   </Activities>
   <Guards>
@@ -21,8 +22,12 @@
       </Transition>
     </State>
 
-    <State name="Third" >
-      <Beep exitState="Second" />
+    <State name="Third">
+      <Beep exitState="Fourth" />
+    </State>
+
+    <State name="Fourth">
+      <Auto exitState="Second" />
     </State>
     
   </States>

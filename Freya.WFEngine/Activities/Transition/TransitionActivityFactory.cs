@@ -9,14 +9,17 @@ namespace Freya.WFEngine
     {
         public IActivity CreateComponent(Type activityType, System.Xml.XmlElement configuration)
         {
-            if (activityType != typeof(TransitionActivity))
-                throw new NotSupportedException();
+            if (activityType == typeof(TransitionActivity))
+                return new TransitionActivity(configuration.GetAttribute(SR.DefaultExitStateAttributeName));
 
-            return new TransitionActivity(configuration.GetAttribute(SR.DefaultExitStateAttributeName));
+            if (activityType == typeof(AutoTransitionActivity))
+                return new AutoTransitionActivity(configuration.GetAttribute(SR.DefaultExitStateAttributeName));
+
+            throw new NotSupportedException();
         }
 
         public bool CanHandle(Type activityType) {
-            return activityType == typeof (TransitionActivity);
+            return activityType == typeof (TransitionActivity) || activityType == typeof(AutoTransitionActivity);
         }
     }
 }

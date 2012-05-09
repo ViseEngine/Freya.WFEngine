@@ -165,10 +165,8 @@ namespace Freya.WFEngine
         public IEnumerable<IActivity> GetActivitiesForItem(TItem item) {
             string currentState = this.StateManager.GetCurrentState(item);
 
-            IEnumerable<ActivityRegistration> activityRegistrations = this.activities[currentState];
-            
             // check all guards
-            activityRegistrations = activityRegistrations.Where(ar => ar.Guards.All(gr => this.XmlGuardFactory.CreateComponent(gr.Type, gr.Configuration).Check(item)));
+            IEnumerable<ActivityRegistration> activityRegistrations = FilterByGuards(this.activities[currentState], item);
 
             return activityRegistrations.Select(activityRegistration => CreateActivity(activityRegistration, item, currentState));
         }
@@ -191,8 +189,31 @@ namespace Freya.WFEngine
             
             return (IActivity)proxyGenerator.CreateInterfaceProxyWithTarget(typeof(IActivity), additionalInterfaces, baseActivity, proxyGenerationOptions, new IInterceptor[] { interceptor });
         }
+
+        private IEnumerable<ActivityRegistration> FilterByGuards(IEnumerable<ActivityRegistration> activityRegistrations, TItem item) {
+            return activityRegistrations.Where(ar => ar.Guards.All(gr => this.XmlGuardFactory.CreateComponent(gr.Type, gr.Configuration).Check(item)));
+        }
+
+        private IAutoTriggerActivity FindAutoTriggerActivity(TItem item, string currentState) {
+            IEnumerable<ActivityRegistration> activityRegistrations = this.activities[currentState].Where(ar => typeof (IAutoTriggerActivity).IsAssignableFrom(ar.Type));
+            activityRegistrations = FilterByGuards(activityRegistrations, item);
+
+            return activityRegistrations.Select(ar => CreateActivity(ar, item, currentState)).Cast<IAutoTriggerActivity>().FirstOrDefault();
+        }
         #endregion
 
+        #region Interception method
+        internal void NotifyInterception(IInvocation invocation, TItem item) {
+            invocation.Proceed();
+            string currentState = (string) invocation.ReturnValue;
+            this.StateManager.ChangeState(item, currentState);
+            IAutoTriggerActivity autoTriggerActivity = FindAutoTriggerActivity(item, currentState);
+            if (autoTriggerActivity != null)
+                autoTriggerActivity.Invoke();
+        }
+
+
+        #endregion
 
 
 

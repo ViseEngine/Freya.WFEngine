@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\Activity.cs" />
+    <Compile Include="Activities\IAutoTriggerActivity.cs" />
+    <Compile Include="Activities\Transition\AutoTransitionActivity.cs" />
     <Compile Include="ActivityContext.cs" />
     <Compile Include="ActivityProxyGenerationHook.cs" />
     <Compile Include="ActivityRegistration.cs" />
