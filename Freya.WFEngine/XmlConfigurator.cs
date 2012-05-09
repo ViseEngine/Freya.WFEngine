@@ -45,10 +45,8 @@ namespace Freya.WFEngine
 
                 Type type = Type.GetType(typeName);
                 if (dictionary.ContainsKey(name) && dictionary[name] != type)
-#warning exception type fix
-                    throw new Exception();
+                    throw new InvalidOperationException(string.Format("Activity type with name '{0}' has been already registered.", name));
 
-#warning type check
                 dictionary[name] = type;
             }
         }
@@ -84,7 +82,18 @@ namespace Freya.WFEngine
                         throw new Exception();
 
                     string activityName = activity.GetAttribute("name");
-                    workflow.AddActivity(stateName, this.activityTypes[activityTypeName], activity, activityName);
+                    Type activityType = this.activityTypes[activityTypeName];
+                    workflow.AddActivity(stateName, activityType, activity, activityName);
+
+                    foreach (var guard in activity.ChildNodes.Cast<XmlElement>()) {
+                        // guard
+                        string guardTypeName = guard.Name;
+
+                        if (this.guardTypes.ContainsKey(guardTypeName) == false)
+                            throw new InvalidOperationException(string.Format("Guard type name '{0}' has not been registered.", guardTypeName));
+
+                        workflow.AddGuard(stateName, activityType, activityName, this.guardTypes[guardTypeName], guard);
+                    }
                 }
             }
         }

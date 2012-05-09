@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -32,23 +33,40 @@ namespace Freya.WFEngine.TestApp
             XmlConfigurator xmlConfigurator = new XmlConfigurator();
             xmlConfigurator.AddXml(Resources.Sample);
             xmlConfigurator.Configure(workflow);
-
+            workflow.XmlActivityFactory.Register(new BeepActivityFactory());
+            workflow.XmlGuardFactory.Register(new AskGuardFactory<Item>());
 
             Item i1 = new Item() { ID = 1, CurrentState = "First" };
-            IActivity[] activities = workflow.GetActivitiesForItem(i1).ToArray();
-            workflow.GetActivitiesForItem(i1).ToArray();
-            foreach (var act in activities) {
-                Console.WriteLine("Available activity {0}", act.Context.Name);
+            while (true) {
+                Console.WriteLine("Current state: {0}", i1.CurrentState);
+                IActivity[] activities = workflow.GetActivitiesForItem(i1).ToArray();
+                foreach (var activity in activities)
+                    Console.WriteLine("Available activity: {0} ({1})", activity.Context.Name, activity.BaseActivity.GetType().FullName);
+                
+                if (activities.Length == 0) {
+                    Console.WriteLine("No activities available!");
+                    break;
+                }
+
+                Console.Write("Which to invoke (1..{0})?", activities.Length);
+                int index = int.Parse(Console.ReadKey().KeyChar.ToString(CultureInfo.InvariantCulture)) - 1;
+                Console.WriteLine();
+                InvokeActivity(activities[index]);
+                Console.WriteLine("----------");
             }
 
-            ITransitionActivity activity = activities.Cast<ITransitionActivity>().Single();
-            activity.Invoke();
-            
-            Console.WriteLine("Current state: {0}", i1.CurrentState);
-
-            activity.Invoke();
-            
             Console.ReadKey();
+        }
+
+        private static void InvokeActivity(IActivity activity) {
+            if (activity is ITransitionActivity) {
+                ((ITransitionActivity) activity).Invoke();
+            } else if (activity is IBeepActivity) {
+                ((IBeepActivity) activity).Invoke();
+            } else {
+                throw new NotSupportedException();
+                
+            }
         }
     }
 }

@@ -63,8 +63,8 @@
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="Guards\IGuard.cs" />
     <Compile Include="InvocationMethodAttribute.cs" />
-    <Compile Include="IStateManager.cs" />
     <Compile Include="ITransitionActivity.cs" />
+    <Compile Include="IStateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.cs" />
     <Compile Include="StateChangeActivityInterceptor.cs" />

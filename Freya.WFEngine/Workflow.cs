@@ -17,13 +17,11 @@ namespace Freya.WFEngine
 
             this.StateManager = stateManager;
 
-            CompositeXmlComponentFactory<IActivity> activityFactory = new CompositeXmlComponentFactory<IActivity>();
-            activityFactory.Register(new TransitionActivityFactory());
-            this.xmlActivityFactory = activityFactory;
+            this.XmlActivityFactory = new CompositeXmlComponentFactory<IActivity>();
+            this.XmlActivityFactory.Register(new TransitionActivityFactory());
             
-            CompositeXmlComponentFactory<IGuard<TItem>> guardFactory = new CompositeXmlComponentFactory<IGuard<TItem>>();
-            guardFactory.Register(new AuthorizeGuardFactory<TItem>());
-            this.xmlGuardFactory = guardFactory;
+            this.XmlGuardFactory = new CompositeXmlComponentFactory<IGuard<TItem>>();
+            this.XmlGuardFactory.Register(new AuthorizeGuardFactory<TItem>());
 
             this.proxyGenerator = new ProxyGenerator();
         }
@@ -48,33 +46,18 @@ namespace Freya.WFEngine
             get { return this.activities.Keys; }
         }
 
-        private IXmlComponentFactory<IActivity> xmlActivityFactory;
         /// <summary>
-        /// Gets or sets the activity factory.
+        /// Gets the activity factory.
         /// </summary>
-        public IXmlComponentFactory<IActivity> XmlActivityFactory {
-            get { return this.xmlActivityFactory; }
-
-            set {
-                if (value == null)
-                    throw new ArgumentNullException("value");
-
-                this.xmlActivityFactory = value;
-            }
+        public CompositeXmlComponentFactory<IActivity> XmlActivityFactory {
+            get; private set;
         }
 
-        private IXmlComponentFactory<IGuard<TItem>> xmlGuardFactory;
         /// <summary>
-        /// Gets or sets the activity guard factory.
+        /// Gets the activity guard factory.
         /// </summary>
-        public IXmlComponentFactory<IGuard<TItem>> XmlGuardFactory {
-            get { return this.xmlGuardFactory; }
-            set {
-                if (value == null)
-                    throw new ArgumentNullException("value");
-
-                this.xmlGuardFactory = value;
-            }
+        public CompositeXmlComponentFactory<IGuard<TItem>> XmlGuardFactory {
+            get; private set;
         }
 
         #endregion
@@ -92,6 +75,57 @@ namespace Freya.WFEngine
 
             return false;
         }
+
+        /// <summary>
+        /// Adds an activity guard to the workflow.
+        /// </summary>
+        /// <param name="state">state name</param>
+        /// <param name="activityType">activity type</param>
+        /// <param name="activityName">activity name</param>
+        /// <param name="guardType">guard type</param>
+        /// <param name="configuration">guard configuration</param>
+        public void AddGuard(string state, Type activityType, string activityName, Type guardType, XmlElement configuration)
+        {
+            #region parameter check
+
+            if (state == null)
+                throw new ArgumentNullException("state");
+
+            if (activityType == null)
+                throw new ArgumentNullException("activityType");
+
+            if (guardType == null)
+                throw new ArgumentNullException("guardType");
+
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
+
+            // autofill generic type arguments
+            if (guardType.IsGenericTypeDefinition && guardType.GetGenericArguments().Length == 1) {
+                guardType = guardType.MakeGenericType(typeof (TItem));
+            }
+            
+            if (typeof(IGuard<TItem>).IsAssignableFrom(guardType) == false) {
+                throw new ArgumentException(string.Format("Guard type must be subtype of IGuard<{0}>", typeof(TItem).FullName));
+            }
+                
+
+            if (this.activities.ContainsKey(state) == false)
+                throw new ArgumentException(string.Format("State '{0}' has not been registered.", state), "state");
+
+            ActivityRegistration activityRegistration = activities[state].SingleOrDefault(ar => ar.Type == activityType && ar.Name == activityName);
+            if (activityRegistration == null)
+                throw new ArgumentException(string.Format("No matching activity found for type {0} and name '{1}'", activityType, activityName));
+            #endregion
+            
+            GuardRegistration guardRegistration = new GuardRegistration {
+                                                                            Configuration = configuration,
+                                                                            Type = guardType
+                                                                        };
+
+            activityRegistration.Guards.Add(guardRegistration);
+        }
+
 
         /// <summary>
         /// Adds an activity for the specified <paramref name="state"/>.

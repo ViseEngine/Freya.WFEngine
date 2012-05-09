@@ -1,20 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Workflow>
   <Activities>
-    <Add name="TransitionActivity" type="Freya.WFEngine.TransitionActivity, Freya.WFEngine" />
+    <Add name="Transition" type="Freya.WFEngine.TransitionActivity, Freya.WFEngine" />
+    <Add name="Beep" type="Freya.WFEngine.TestApp.BeepActivity, Freya.WFEngine.TestApp" />
   </Activities>
   <Guards>
-    <Add name="RoleGuard" type="Scio.CIS.RoleGuard, Scio.CIS" />
+    <Add name="Ask" type="Freya.WFEngine.TestApp.AskGuard`1, Freya.WFEngine.TestApp" />
   </Guards>
   <States>
     <State name="First">
-      <TransitionActivity exitState="Second" name="firstActivity" />
+      <Transition exitState="Second" name="firstActivity" />
     </State>
     
     <State name="Second">
-      <TransitionActivity exitState="First">
-        <RoleGuard roles="author;guarantee" />    
-      </TransitionActivity>
+      <Transition exitState="First" name="toFirst">
+        <Ask question="Proceed to First (Y/N)?" />
+      </Transition>
+      <Transition exitState="Third" name="toThird">
+        <Ask question="Proceed to Third (Y/N)?" />
+      </Transition>
+    </State>
+
+    <State name="Third" >
+      <Beep exitState="Second" />
     </State>
     
   </States>

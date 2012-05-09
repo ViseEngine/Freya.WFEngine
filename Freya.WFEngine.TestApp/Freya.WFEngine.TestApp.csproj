@@ -43,6 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AskGuard.cs" />
+    <Compile Include="AskGuardFactory.cs" />
+    <Compile Include="BeepActivity.cs" />
+    <Compile Include="BeepActivityFactory.cs" />
+    <Compile Include="IBeepActivity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
