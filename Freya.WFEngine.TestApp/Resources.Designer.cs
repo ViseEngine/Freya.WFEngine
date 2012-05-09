@@ -64,24 +64,39 @@ namespace Freya.WFEngine.TestApp {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;Workflow&gt;
         ///  &lt;Activities&gt;
-        ///    &lt;Add name=&quot;TransitionActivity&quot; type=&quot;Freya.WFEngine.TransitionActivity, Freya.WFEngine&quot; /&gt;
+        ///    &lt;Add name=&quot;Transition&quot; type=&quot;Freya.WFEngine.TransitionActivity, Freya.WFEngine&quot; /&gt;
+        ///    &lt;Add name=&quot;Auto&quot; type=&quot;Freya.WFEngine.AutoTransitionActivity, Freya.WFEngine&quot; /&gt;
+        ///    &lt;Add name=&quot;Beep&quot; type=&quot;Freya.WFEngine.TestApp.BeepActivity, Freya.WFEngine.TestApp&quot; /&gt;
         ///  &lt;/Activities&gt;
         ///  &lt;Guards&gt;
-        ///    &lt;Add name=&quot;RoleGuard&quot; type=&quot;Scio.CIS.RoleGuard, Scio.CIS&quot; /&gt;
+        ///    &lt;Add name=&quot;Ask&quot; type=&quot;Freya.WFEngine.TestApp.AskGuard`1, Freya.WFEngine.TestApp&quot; /&gt;
         ///  &lt;/Guards&gt;
         ///  &lt;States&gt;
         ///    &lt;State name=&quot;First&quot;&gt;
-        ///      &lt;TransitionActivity exitState=&quot;Second&quot; /&gt;
-        ///    &lt;/State&gt;
-        ///    
-        ///    &lt;State name=&quot;Second&quot;&gt;
-        ///      &lt;TransitionActivity exitState=&quot;First&quot;&gt;
-        ///        &lt;RoleGuard roles=&quot;author;guarantee&quot; /&gt;    
-        ///      &lt; [rest of string was truncated]&quot;;.
+        ///      &lt;T [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Sample {
             get {
                 return ResourceManager.GetString("Sample", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;Workflow&gt;
+        ///  &lt;Activities&gt;
+        ///    &lt;Add name=&quot;Transition&quot; type=&quot;Freya.WFEngine.TransitionActivity, Freya.WFEngine&quot; /&gt;
+        ///    &lt;Add name=&quot;Auto&quot; type=&quot;Freya.WFEngine.AutoTransitionActivity, Freya.WFEngine&quot; /&gt;
+        ///    &lt;Add name=&quot;Beep&quot; type=&quot;Freya.WFEngine.TestApp.BeepActivity, Freya.WFEngine.TestApp&quot; /&gt;
+        ///  &lt;/Activities&gt;
+        ///  &lt;Guards&gt;
+        ///    &lt;Add name=&quot;Ask&quot; type=&quot;Freya.WFEngine.TestApp.AskGuard`1, Freya.WFEngine.TestApp&quot; /&gt;
+        ///  &lt;/Guards&gt;
+        ///&lt;/Workflow&gt;.
+        /// </summary>
+        internal static string TypeRegistration {
+            get {
+                return ResourceManager.GetString("TypeRegistration", resourceCulture);
             }
         }
     }

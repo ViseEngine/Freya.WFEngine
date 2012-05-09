@@ -209,6 +209,9 @@ namespace Freya.WFEngine
         private readonly EventHandlerList eventHandlerList = new EventHandlerList();
 
         private static readonly object eventPreInvokeKey = new object();
+        /// <summary>
+        /// Occurs before an activity is invoked.
+        /// </summary>
         public event WorkflowInvocationDelegate PreInvoke {
             add { eventHandlerList.AddHandler(eventPreInvokeKey, value);}
             remove { eventHandlerList.RemoveHandler(eventPreInvokeKey, value);}
@@ -222,6 +225,9 @@ namespace Freya.WFEngine
 
 
         private static readonly object eventPostInvokeKey = new object();
+        /// <summary>
+        /// Occurs after an activity is invoked.
+        /// </summary>
         public event WorkflowInvocationDelegate PostInvoke {
             add { eventHandlerList.AddHandler(eventPostInvokeKey, value);}
             remove { eventHandlerList.RemoveHandler(eventPostInvokeKey, value);}

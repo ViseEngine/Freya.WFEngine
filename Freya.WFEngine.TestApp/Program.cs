@@ -31,6 +31,7 @@ namespace Freya.WFEngine.TestApp
         {
             Workflow<Item> workflow = new Workflow<Item>(new DummyStateManager());
             XmlConfigurator xmlConfigurator = new XmlConfigurator();
+            xmlConfigurator.AddXml(Resources.TypeRegistration);
             xmlConfigurator.AddXml(Resources.Sample);
             xmlConfigurator.Configure(workflow);
             workflow.XmlActivityFactory.Register(new BeepActivityFactory());

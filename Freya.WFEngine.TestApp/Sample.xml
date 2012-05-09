@@ -1,13 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Workflow>
-  <Activities>
-    <Add name="Transition" type="Freya.WFEngine.TransitionActivity, Freya.WFEngine" />
-    <Add name="Auto" type="Freya.WFEngine.AutoTransitionActivity, Freya.WFEngine" />
-    <Add name="Beep" type="Freya.WFEngine.TestApp.BeepActivity, Freya.WFEngine.TestApp" />
-  </Activities>
-  <Guards>
-    <Add name="Ask" type="Freya.WFEngine.TestApp.AskGuard`1, Freya.WFEngine.TestApp" />
-  </Guards>
   <States>
     <State name="First">
       <Transition exitState="Second" name="firstActivity" />
