@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -24,6 +25,7 @@ namespace Freya.WFEngine
             this.XmlGuardFactory.Register(new AuthorizeGuardFactory<TItem>());
 
             this.proxyGenerator = new ProxyGenerator();
+            this.interceptors = new IInterceptor[] { new WorkflowInterceptor<TItem>(this) };
         }
         #endregion
 
@@ -31,6 +33,7 @@ namespace Freya.WFEngine
         private readonly IDictionary<string, List<ActivityRegistration>> activities = new Dictionary<string, List<ActivityRegistration>>(StringComparer.InvariantCulture);
         private readonly ProxyGenerationOptions proxyGenerationOptions = new ProxyGenerationOptions(ActivityProxyGenerationHook.DefaultInstance);
         private readonly ProxyGenerator proxyGenerator;
+        private readonly IInterceptor[] interceptors;
         #endregion
 
         #region Properties
@@ -184,10 +187,9 @@ namespace Freya.WFEngine
                                                               Name = activityRegistration.Name
                                                           };
 
-            var interceptor = new StateChangeActivityInterceptor<TItem>(this, item);
             Type[] additionalInterfaces = baseActivity.GetType().GetInterfaces();
             
-            return (IActivity)proxyGenerator.CreateInterfaceProxyWithTarget(typeof(IActivity), additionalInterfaces, baseActivity, proxyGenerationOptions, new IInterceptor[] { interceptor });
+            return (IActivity)proxyGenerator.CreateInterfaceProxyWithTarget(typeof(IActivity), additionalInterfaces, baseActivity, proxyGenerationOptions, this.interceptors);
         }
 
         private IEnumerable<ActivityRegistration> FilterByGuards(IEnumerable<ActivityRegistration> activityRegistrations, TItem item) {
@@ -202,20 +204,52 @@ namespace Freya.WFEngine
         }
         #endregion
 
-        #region Interception method
-        internal void NotifyInterception(IInvocation invocation, TItem item) {
-            invocation.Proceed();
-            string currentState = (string) invocation.ReturnValue;
-            this.StateManager.ChangeState(item, currentState);
-            IAutoTriggerActivity autoTriggerActivity = FindAutoTriggerActivity(item, currentState);
-            if (autoTriggerActivity != null)
-                autoTriggerActivity.Invoke();
+        #region Events
+        // ReSharper disable StaticFieldInGenericType
+        private readonly EventHandlerList eventHandlerList = new EventHandlerList();
+
+        private static readonly object eventPreInvokeKey = new object();
+        public event WorkflowInvocationDelegate PreInvoke {
+            add { eventHandlerList.AddHandler(eventPreInvokeKey, value);}
+            remove { eventHandlerList.RemoveHandler(eventPreInvokeKey, value);}
+        }
+        
+        private void OnPreInvoke(IActivity activity) {
+            WorkflowInvocationDelegate handler = eventHandlerList[eventPreInvokeKey] as WorkflowInvocationDelegate;
+            if (handler != null)
+                handler(this, activity, activity.Context.State);
         }
 
 
+        private static readonly object eventPostInvokeKey = new object();
+        public event WorkflowInvocationDelegate PostInvoke {
+            add { eventHandlerList.AddHandler(eventPostInvokeKey, value);}
+            remove { eventHandlerList.RemoveHandler(eventPostInvokeKey, value);}
+        }
+        private void OnPostInvoke(IActivity activity, string newState)
+        {
+            WorkflowInvocationDelegate handler = eventHandlerList[eventPostInvokeKey] as WorkflowInvocationDelegate;
+            if (handler != null)
+                handler(this, activity, newState);
+        }
+        // ReSharper restore StaticFieldInGenericType
         #endregion
 
+        #region Interception
+        internal void Intercept(IInvocation invocation) {
+            IActivity activity = (IActivity)invocation.InvocationTarget;
+            OnPreInvoke(activity);
 
+            invocation.Proceed();
 
+            string newState = (string)invocation.ReturnValue;
+            OnPostInvoke(activity, newState);
+
+            this.StateManager.ChangeState((TItem)activity.Context.Item, newState);
+            IAutoTriggerActivity autoTriggerActivity = FindAutoTriggerActivity((TItem)activity.Context.Item, newState);
+            if (autoTriggerActivity != null)
+                autoTriggerActivity.Invoke();
+        }
+        #endregion
     }
 }

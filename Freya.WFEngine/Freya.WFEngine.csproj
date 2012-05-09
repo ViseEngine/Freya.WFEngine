@@ -69,10 +69,11 @@
     <Compile Include="IStateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.cs" />
-    <Compile Include="StateChangeActivityInterceptor.cs" />
     <Compile Include="Activities\Transition\TransitionActivity.cs" />
     <Compile Include="Activities\Transition\TransitionActivityFactory.cs" />
     <Compile Include="Workflow.cs" />
+    <Compile Include="WorkflowInterceptor.cs" />
+    <Compile Include="WorkflowInvocationDelegate.cs" />
     <Compile Include="XmlConfigurator.cs" />
   </ItemGroup>
   <ItemGroup>
