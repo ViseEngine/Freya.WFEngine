@@ -6,12 +6,12 @@ using Castle.DynamicProxy;
 
 namespace Freya.WFEngine
 {
-    public class StateChangeActivityInterceptor<TItem>: IInterceptor
+    internal class StateChangeActivityInterceptor<TItem>: IInterceptor
     {
         public StateChangeActivityInterceptor(Workflow<TItem> workflow, TItem item) {
-            if (workflow    == null)
+            if (workflow == null)
                 throw new ArgumentNullException("workflow");
-            
+
             this.workflow = workflow;
             this.item = item;
         }
