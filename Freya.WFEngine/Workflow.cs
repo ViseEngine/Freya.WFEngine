@@ -181,11 +181,7 @@ namespace Freya.WFEngine
         /// </summary>
         private IActivity CreateActivity(ActivityRegistration activityRegistration, TItem item, string currentState) {
             IActivity baseActivity = this.XmlActivityFactory.CreateComponent(activityRegistration.Type, activityRegistration.Configuration);
-            baseActivity.Context = new ActivityContext {
-                                                              Item = item,
-                                                              State = currentState,
-                                                              Name = activityRegistration.Name
-                                                          };
+            baseActivity.Context = new ActivityContext(activityRegistration.Name, item, currentState);
 
             Type[] additionalInterfaces = baseActivity.GetType().GetInterfaces();
             
@@ -223,7 +219,7 @@ namespace Freya.WFEngine
         private void OnPreInvoke(IActivity activity) {
             WorkflowInvocationDelegate handler = eventHandlerList[eventPreInvokeKey] as WorkflowInvocationDelegate;
             if (handler != null)
-                handler(this, activity, activity.Context.State);
+                handler(this, activity);
         }
 
 
@@ -235,11 +231,11 @@ namespace Freya.WFEngine
             add { eventHandlerList.AddHandler(eventPostInvokeKey, value);}
             remove { eventHandlerList.RemoveHandler(eventPostInvokeKey, value);}
         }
-        private void OnPostInvoke(IActivity activity, string newState)
+        private void OnPostInvoke(IActivity activity)
         {
             WorkflowInvocationDelegate handler = eventHandlerList[eventPostInvokeKey] as WorkflowInvocationDelegate;
             if (handler != null)
-                handler(this, activity, newState);
+                handler(this, activity);
         }
         // ReSharper restore StaticFieldInGenericType
         #endregion
@@ -251,8 +247,8 @@ namespace Freya.WFEngine
 
             invocation.Proceed();
 
-            string newState = (string)invocation.ReturnValue;
-            OnPostInvoke(activity, newState);
+            string newState = activity.Context.State;
+            OnPostInvoke(activity);
 
             this.StateManager.ChangeState((TItem)activity.Context.Item, newState);
             IAutoTriggerActivity autoTriggerActivity = FindAutoTriggerActivity((TItem)activity.Context.Item, newState);

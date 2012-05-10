@@ -56,7 +56,7 @@ namespace Freya.WFEngine
 
                 Type type = Type.GetType(typeName);
 
-                AddTypeDefinition(typeName, type, dictionary);
+                AddTypeDefinition(name, type, dictionary);
             }
         }
 

@@ -10,8 +10,8 @@ namespace Freya.WFEngine
         public TransitionActivity(string exitState) : base(exitState) {
         }
 
-        public virtual string Invoke() {
-            return this.ExitState;
+        public virtual void Invoke() {
+            this.Context.State = this.ExitState;
         }
     }
 }

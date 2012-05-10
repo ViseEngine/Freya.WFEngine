@@ -25,14 +25,13 @@ namespace Freya.WFEngine.Tests
 
             var activities = wf.GetActivitiesForItem(item).ToArray();
             Assert.AreEqual(1, activities.Length);
-            Assert.AreEqual("Second", ((ITransitionActivity) activities.Single()).Invoke());
+            activities.Cast<ITransitionActivity>().Single().Invoke();
 
             Assert.AreEqual("Second", item.State);
 
             activities = wf.GetActivitiesForItem(item).ToArray();
             Assert.AreEqual(1, activities.Length);
-            Assert.AreEqual("First", ((ITransitionActivity)activities.Single()).Invoke());
-
+            activities.Cast<ITransitionActivity>().Single().Invoke();
             Assert.AreEqual("First", item.State);
         }
     }

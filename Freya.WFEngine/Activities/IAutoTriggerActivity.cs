@@ -8,6 +8,6 @@ namespace Freya.WFEngine
     public interface IAutoTriggerActivity
     {
         [InvocationMethod]
-        string Invoke();
+        void Invoke();
     }
 }

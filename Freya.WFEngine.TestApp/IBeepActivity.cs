@@ -8,6 +8,6 @@ namespace Freya.WFEngine.TestApp
     public interface IBeepActivity : IActivity
     {
         [InvocationMethod]
-        string Invoke();
+        void Invoke();
     }
 }

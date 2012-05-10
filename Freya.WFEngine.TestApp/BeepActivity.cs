@@ -5,20 +5,14 @@ using System.Text;
 
 namespace Freya.WFEngine.TestApp
 {
-    public class BeepActivity : Activity, IBeepActivity
+    public class BeepActivity : SingleExitPointActivity, IBeepActivity
     {
-        private readonly string exitState;
-
-        public BeepActivity(string exitState) {
-            if (exitState == null)
-                throw new ArgumentNullException("exitState");
-            
-            this.exitState = exitState;
+        public BeepActivity(string exitState) : base(exitState) {
         }
 
-        public string Invoke() {
+        public void Invoke() {
             Console.Beep();
-            return exitState;
+            this.Context.State = ExitState;
         }
     }
 }

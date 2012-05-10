@@ -8,6 +8,6 @@ namespace Freya.WFEngine
     public interface ITransitionActivity : IActivity
     {
         [InvocationMethod]
-        string Invoke();
+        void Invoke();
     }
 }

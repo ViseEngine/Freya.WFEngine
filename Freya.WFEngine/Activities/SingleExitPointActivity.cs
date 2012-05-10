@@ -7,7 +7,7 @@ namespace Freya.WFEngine
 {
     public abstract class SingleExitPointActivity : Activity
     {
-        public SingleExitPointActivity(string exitState)
+        protected SingleExitPointActivity(string exitState)
         {
             if (exitState == null)
                 throw new ArgumentNullException("exitState");

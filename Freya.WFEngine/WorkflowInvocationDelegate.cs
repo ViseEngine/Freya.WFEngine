@@ -5,5 +5,5 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    public delegate void WorkflowInvocationDelegate(object sender, IActivity activity, string currentState);
+    public delegate void WorkflowInvocationDelegate(object sender, IActivity activity);
 }
