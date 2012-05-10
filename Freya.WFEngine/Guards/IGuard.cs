@@ -7,6 +7,6 @@ namespace Freya.WFEngine
 {
     public interface IGuard<TItem>
     {
-        bool Check(TItem item);
+        bool Check(WorkflowContext<TItem> item);
     }
 }

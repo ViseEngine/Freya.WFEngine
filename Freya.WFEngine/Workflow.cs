@@ -169,7 +169,7 @@ namespace Freya.WFEngine
             string currentState = this.StateManager.GetCurrentState(item);
 
             // check all guards
-            IEnumerable<ActivityRegistration> activityRegistrations = FilterByGuards(this.activities[currentState], item);
+            IEnumerable<ActivityRegistration> activityRegistrations = FilterByGuards(this.activities[currentState], item, currentState);
 
             return activityRegistrations.Select(activityRegistration => CreateActivity(activityRegistration, item, currentState));
         }
@@ -192,13 +192,16 @@ namespace Freya.WFEngine
             return (IActivity)proxyGenerator.CreateInterfaceProxyWithTarget(typeof(IActivity), additionalInterfaces, baseActivity, proxyGenerationOptions, this.interceptors);
         }
 
-        private IEnumerable<ActivityRegistration> FilterByGuards(IEnumerable<ActivityRegistration> activityRegistrations, TItem item) {
-            return activityRegistrations.Where(ar => ar.Guards.All(gr => this.XmlGuardFactory.CreateComponent(gr.Type, gr.Configuration).Check(item)));
+        private IEnumerable<ActivityRegistration> FilterByGuards(IEnumerable<ActivityRegistration> activityRegistrations, TItem item, string state) {
+            return activityRegistrations.Where(ar => ar.Guards.All(gr => {
+                                                                       WorkflowContext<TItem> context = new WorkflowContext<TItem>(this, item, ar.Name, ar.Type, state);
+                                                                       return this.XmlGuardFactory.CreateComponent(gr.Type, gr.Configuration).Check(context);
+                                                                   }));
         }
 
         private IAutoTriggerActivity FindAutoTriggerActivity(TItem item, string currentState) {
             IEnumerable<ActivityRegistration> activityRegistrations = this.activities[currentState].Where(ar => typeof (IAutoTriggerActivity).IsAssignableFrom(ar.Type));
-            activityRegistrations = FilterByGuards(activityRegistrations, item);
+            activityRegistrations = FilterByGuards(activityRegistrations, item, currentState);
 
             return activityRegistrations.Select(ar => CreateActivity(ar, item, currentState)).Cast<IAutoTriggerActivity>().FirstOrDefault();
         }

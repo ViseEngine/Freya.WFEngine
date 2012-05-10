@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Freya.WFEngine</RootNamespace>
     <AssemblyName>Freya.WFEngine</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
@@ -79,6 +79,7 @@
     <Compile Include="Activities\Transition\TransitionActivity.cs" />
     <Compile Include="Activities\Transition\TransitionActivityFactory.cs" />
     <Compile Include="Workflow.cs" />
+    <Compile Include="WorkflowContext.cs" />
     <Compile Include="WorkflowInterceptor.cs" />
     <Compile Include="WorkflowInvocationDelegate.cs" />
     <Compile Include="XmlConfigurator.cs" />

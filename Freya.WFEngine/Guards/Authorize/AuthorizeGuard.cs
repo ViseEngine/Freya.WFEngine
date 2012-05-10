@@ -8,7 +8,7 @@ namespace Freya.WFEngine
 {
     public class AuthorizeGuard<TItem> : IGuard<TItem>
     {
-        public bool Check(TItem item) {
+        public bool Check(WorkflowContext<TItem> item) {
             return Thread.CurrentPrincipal != null && Thread.CurrentPrincipal.Identity.IsAuthenticated;
         }
     }

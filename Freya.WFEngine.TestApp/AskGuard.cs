@@ -13,7 +13,7 @@ namespace Freya.WFEngine.TestApp
 
         private readonly string question;
 
-        public bool Check(TItem item) {
+        public bool Check(WorkflowContext<TItem> item) {
             Console.WriteLine(question);
             while (true) {
                 ConsoleKey consoleKey = Console.ReadKey(true).Key;
