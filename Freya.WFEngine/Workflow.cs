@@ -173,6 +173,19 @@ namespace Freya.WFEngine
 
             return activityRegistrations.Select(activityRegistration => CreateActivity(activityRegistration, item, currentState));
         }
+
+        /// <summary>
+        /// Returns all invokable activities of type <typeparamref name="TActivity"/> for the specified <paramref name="item"/>.
+        /// </summary>
+        /// <typeparam name="TActivity">Type of the activity. Must be an interface.</typeparam>
+        public IEnumerable<TActivity> GetActivitiesForItem<TActivity>(TItem item) where TActivity : IActivity
+        {
+            if (typeof(TActivity).IsInterface == false)
+                throw new ArgumentException("TActivity must be an interface.");
+
+#warning optimize this :P
+            return this.GetActivitiesForItem(item).OfType<TActivity>();
+        }
         #endregion
 
         #region Helper methods
