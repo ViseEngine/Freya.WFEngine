@@ -95,8 +95,7 @@ namespace Freya.WFEngine
                     string activityTypeName = activity.Name;
                     // check fox type registration
                     if (this.activityTypes.ContainsKey(activityTypeName) == false)
-#warning exception type fix
-                        throw new Exception();
+                        throw new InvalidOperationException(string.Format("Activity type name '{0}' has not been registered.", activityTypeName));
 
                     string activityName = activity.GetAttribute("name");
                     Type activityType = this.activityTypes[activityTypeName];
