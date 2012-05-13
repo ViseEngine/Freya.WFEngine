@@ -11,15 +11,27 @@ namespace Freya.WFEngine
             this.Name = name;
             this.Item = item;
             this.State = state;
+            this.OriginalState = OriginalState;
         }
 
+        /// <summary>
+        /// Gets the name of the activity.
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// Gets original state of the item. The property value does not change after the activity is executed.
+        /// </summary>
+        public string OriginalState { get; private set; }
 
         /// <summary>
         /// Gets or sets the current state of the item. Use the setter to set new state.
         /// </summary>
         public string State { get; set; }
 
+        /// <summary>
+        /// Gets the item the activity is performed upon.
+        /// </summary>
         public object Item { get; private set; }
     }
 }
