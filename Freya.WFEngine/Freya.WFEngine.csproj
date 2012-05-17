@@ -67,8 +67,6 @@
     <Compile Include="CompositeXmlComponentFactory.cs" />
     <Compile Include="Activities\IActivity.cs" />
     <Compile Include="GuardRegistration.cs" />
-    <Compile Include="Guards\Authorize\AuthorizeGuard.cs" />
-    <Compile Include="Guards\Authorize\AuthorizeGuardFactory.cs" />
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="Guards\IGuard.cs" />
     <Compile Include="InvocationMethodAttribute.cs" />

@@ -14,7 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Castle.DynamicProxy;
-using Freya.WFEngine.Guards.Authorize;
 
 namespace Freya.WFEngine
 {
@@ -31,7 +30,6 @@ namespace Freya.WFEngine
             this.XmlActivityFactory.Register(new TransitionActivityFactory());
             
             this.XmlGuardFactory = new CompositeXmlComponentFactory<IGuard<TItem>>();
-            this.XmlGuardFactory.Register(new AuthorizeGuardFactory<TItem>());
 
             this.proxyGenerator = new ProxyGenerator();
             this.interceptors = new IInterceptor[] { new WorkflowInterceptor<TItem>(this) };
