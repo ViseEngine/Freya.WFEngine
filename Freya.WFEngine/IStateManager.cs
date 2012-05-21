@@ -14,7 +14,7 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    public interface IStateManager<TItem>
+    public interface IStateManager<in TItem>
     {
         string GetCurrentState(TItem item);
 

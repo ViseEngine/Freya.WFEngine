@@ -15,14 +15,15 @@ using System.Xml;
 
 namespace Freya.WFEngine.TestApp
 {
-    public class AskGuardFactory<TItem> : IXmlComponentFactory<IGuard<TItem>>
+    public class AskGuardFactory<TItem> : IComponentFactory<IGuard<TItem>>
     {
         public bool CanHandle(Type componentType) {
             return componentType == typeof (AskGuard<TItem>);
         }
 
-        public IGuard<TItem> CreateComponent(Type componentType, XmlElement configuration) {
-            return new AskGuard<TItem>(configuration.GetAttribute("question"));
+        public IGuard<TItem> CreateComponent(Type componentType, IDictionary<string, object> configuration) {
+            string question = (string) configuration["question"];
+            return new AskGuard<TItem>(question);
         }
     }
 }

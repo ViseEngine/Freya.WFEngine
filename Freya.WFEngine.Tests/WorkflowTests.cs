@@ -21,8 +21,8 @@ namespace Freya.WFEngine.Tests
     {
         static WorkflowTests() {
             emptyXmlElement = ToXmlElement("<Empty />");
-            transitionDefinitionToFirst = ToXmlElement("<Transition exitState=\"First\" />");
-            transitionDefinitionToSecond = ToXmlElement("<Transition exitState=\"Second\" />");
+            transitionDefinitionToFirst = new Dictionary<string, object> { { "exitState", "First" } };
+            transitionDefinitionToSecond = new Dictionary<string, object> { { "exitState", "Second" } };
         }
 
         #region helper classes
@@ -48,8 +48,8 @@ namespace Freya.WFEngine.Tests
 
         private Workflow<Item> emptyWorkflow;
         internal static XmlElement emptyXmlElement;
-        internal static XmlElement transitionDefinitionToSecond;
-        internal static XmlElement transitionDefinitionToFirst;
+        internal static IDictionary<string, object> transitionDefinitionToSecond;
+        internal static IDictionary<string, object> transitionDefinitionToFirst;
 
         [TestFixtureSetUp]
         public void SetUpFixture() {
@@ -97,14 +97,14 @@ namespace Freya.WFEngine.Tests
         [Test]
         [ExpectedException(typeof(ArgumentException))]
         public void AddActivity_Throws_ArgumentException_For_Invalid_StateName() {
-            this.emptyWorkflow.AddActivity("state", typeof(TransitionActivity), emptyXmlElement);
+            this.emptyWorkflow.AddActivity("state", typeof(TransitionActivity), null);
         }
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
         public void AddActivity_Throws_ArgumentException_For_Invalid_Activity_Type() {
             this.emptyWorkflow.AddState("state");
-            this.emptyWorkflow.AddActivity("state", typeof(Type), emptyXmlElement);
+            this.emptyWorkflow.AddActivity("state", typeof(Type), null);
         }
 
         [Test]

@@ -15,9 +15,9 @@ using System.Xml;
 
 namespace Freya.WFEngine
 {
-    public interface IXmlComponentFactory<TComponent>
+    public interface IComponentFactory<TComponent>
     {
         bool CanHandle(Type componentType);
-        TComponent CreateComponent(Type componentType, XmlElement configuration);
+        TComponent CreateComponent(Type componentType, IDictionary<string, object> parameters);
     }
 }

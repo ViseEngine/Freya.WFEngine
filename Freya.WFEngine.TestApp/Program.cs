@@ -43,8 +43,8 @@ namespace Freya.WFEngine.TestApp
             xmlConfigurator.AddXml(Resources.TypeRegistration);
             xmlConfigurator.AddXml(Resources.Sample);
             xmlConfigurator.Configure(workflow);
-            workflow.XmlActivityFactory.Register(new BeepActivityFactory());
-            workflow.XmlGuardFactory.Register(new AskGuardFactory<Item>());
+            workflow.ActivityFactory.Register(new BeepActivityFactory());
+            workflow.GuardFactory.Register(new AskGuardFactory<Item>());
             workflow.PostInvoke += (sender, activity) => Console.WriteLine("PostInvoke: => {0}", activity.Context.State);
             workflow.PreInvoke += (sender, activity) => Console.WriteLine("PreInvoke ({0}, {1})", activity.GetType().FullName, activity.Context.Name);
 

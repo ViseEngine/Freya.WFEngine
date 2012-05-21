@@ -18,6 +18,6 @@ namespace Freya.WFEngine
     internal class GuardRegistration
     {
         public Type Type { get; set; }
-        public XmlElement Configuration { get; set; }
+        public IDictionary<string, object> Parameters { get; set; }
     }
 }

@@ -21,23 +21,21 @@ namespace Freya.WFEngine
             this.Guards = new List<GuardRegistration>();
         }
 
-        public ActivityRegistration(Type type, XmlElement configuration, string name) : this() {
+        public ActivityRegistration(Type type, IDictionary<string, object> parameters, string name) : this() {
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
-
             this.Type = type;
-            this.Configuration = configuration;
+            this.Parameters = parameters;
             this.Name = name;
         }
 
         
         public string Name { get; set; }
         public Type Type { get; set; }
-        public XmlElement Configuration { get; set; }
 
+        public IDictionary<string, object> Parameters { get; set; }
+ 
         public List<GuardRegistration> Guards { get; private set; } 
     }
 }

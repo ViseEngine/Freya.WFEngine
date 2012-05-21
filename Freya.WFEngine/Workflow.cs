@@ -26,10 +26,10 @@ namespace Freya.WFEngine
 
             this.StateManager = stateManager;
 
-            this.XmlActivityFactory = new CompositeXmlComponentFactory<IActivity>();
-            this.XmlActivityFactory.Register(new TransitionActivityFactory());
+            this.ActivityFactory = new CompositeComponentFactory<IActivity>();
+            this.ActivityFactory.Register(new TransitionActivityFactory());
             
-            this.XmlGuardFactory = new CompositeXmlComponentFactory<IGuard<TItem>>();
+            this.GuardFactory = new CompositeComponentFactory<IGuard<TItem>>();
 
             this.proxyGenerator = new ProxyGenerator();
             this.interceptors = new IInterceptor[] { new WorkflowInterceptor<TItem>(this) };
@@ -59,14 +59,14 @@ namespace Freya.WFEngine
         /// <summary>
         /// Gets the activity factory.
         /// </summary>
-        public CompositeXmlComponentFactory<IActivity> XmlActivityFactory {
+        public CompositeComponentFactory<IActivity> ActivityFactory {
             get; private set;
         }
 
         /// <summary>
         /// Gets the activity guard factory.
         /// </summary>
-        public CompositeXmlComponentFactory<IGuard<TItem>> XmlGuardFactory {
+        public CompositeComponentFactory<IGuard<TItem>> GuardFactory {
             get; private set;
         }
 
@@ -94,7 +94,7 @@ namespace Freya.WFEngine
         /// <param name="activityName">activity name</param>
         /// <param name="guardType">guard type</param>
         /// <param name="configuration">guard configuration</param>
-        public void AddGuard(string state, Type activityType, string activityName, Type guardType, XmlElement configuration)
+        public void AddGuard(string state, Type activityType, string activityName, Type guardType, IDictionary<string, object> parameters)
         {
             #region parameter check
 
@@ -106,9 +106,6 @@ namespace Freya.WFEngine
 
             if (guardType == null)
                 throw new ArgumentNullException("guardType");
-
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
 
             // autofill generic type arguments
             if (guardType.IsGenericTypeDefinition && guardType.GetGenericArguments().Length == 1) {
@@ -129,20 +126,19 @@ namespace Freya.WFEngine
             #endregion
             
             GuardRegistration guardRegistration = new GuardRegistration {
-                                                                            Configuration = configuration,
+                                                                            Parameters = parameters,
                                                                             Type = guardType
                                                                         };
 
             activityRegistration.Guards.Add(guardRegistration);
         }
 
-
         /// <summary>
         /// Adds an activity for the specified <paramref name="state"/>.
         /// </summary>
-        public void AddActivity(string state, Type activityType, XmlElement configuration, string activityName = null)
+        public void AddActivity(string state, Type activityType, IDictionary<string, object> parameters, string activityName = null)
         {
-            #region parameter check
+            #region Param check
             if (this.States.Contains(state) == false)
                 throw new ArgumentException(string.Format("State '{0}' has not been registered yet.", state), "state");
 
@@ -151,20 +147,17 @@ namespace Freya.WFEngine
 
             if (activityType == null)
                 throw new ArgumentNullException("activityType");
-            
+
             if (typeof(IActivity).IsAssignableFrom(activityType) == false)
                 throw new ArgumentException(string.Format("Parameter activityType ({0}) must be a subtype of IActivity interface", activityType.FullName), "activityType");
-
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
             #endregion
 
-            ActivityRegistration ar = new ActivityRegistration
-            {
-                Configuration = (XmlElement)configuration.CloneNode(true),
-                Name = activityName,
-                Type = activityType
-            };
+
+            ActivityRegistration ar = new ActivityRegistration {
+                                                                   Name = activityName,
+                                                                   Parameters = parameters,
+                                                                   Type = activityType
+                                                               };
 
             this.activities[state].Add(ar);
         }
@@ -190,7 +183,6 @@ namespace Freya.WFEngine
             if (typeof(TActivity).IsInterface == false)
                 throw new ArgumentException("TActivity must be an interface.");
 
-#warning optimize this :P
             return this.GetActivitiesForItem(item).OfType<TActivity>();
         }
         #endregion
@@ -200,7 +192,7 @@ namespace Freya.WFEngine
         /// Creates the activity and wraps it in a proxy
         /// </summary>
         private IActivity CreateActivity(ActivityRegistration activityRegistration, TItem item, string currentState) {
-            IActivity baseActivity = this.XmlActivityFactory.CreateComponent(activityRegistration.Type, activityRegistration.Configuration);
+            IActivity baseActivity = this.ActivityFactory.CreateComponent(activityRegistration.Type, activityRegistration.Parameters);
             baseActivity.Context = new ActivityContext(activityRegistration.Name, item, currentState);
 
             Type[] additionalInterfaces = baseActivity.GetType().GetInterfaces();
@@ -211,7 +203,7 @@ namespace Freya.WFEngine
         private IEnumerable<ActivityRegistration> FilterByGuards(IEnumerable<ActivityRegistration> activityRegistrations, TItem item, string state) {
             return activityRegistrations.Where(ar => ar.Guards.All(gr => {
                                                                        WorkflowContext<TItem> context = new WorkflowContext<TItem>(this, item, ar.Name, ar.Type, state);
-                                                                       return this.XmlGuardFactory.CreateComponent(gr.Type, gr.Configuration).Check(context);
+                                                                       return this.GuardFactory.CreateComponent(gr.Type, gr.Parameters).Check(context);
                                                                    }));
         }
 

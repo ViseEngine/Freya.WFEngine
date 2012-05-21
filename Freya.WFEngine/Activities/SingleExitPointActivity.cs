@@ -16,17 +16,21 @@ namespace Freya.WFEngine
 {
     public abstract class SingleExitPointActivity : Activity
     {
+        public const string ExitPointParameterName = SR.DefaultExitStateAttributeName;
+
         protected SingleExitPointActivity(string exitState)
         {
-            if (exitState == null)
-                throw new ArgumentNullException("exitState");
-
             this.ExitState = exitState;
         }
 
         public virtual string ExitState {
             get;
             private set;
+        }
+
+        protected virtual void UpdateState() {
+            if (this.ExitState != null)
+                this.Context.State = this.ExitState;
         }
     }
 }

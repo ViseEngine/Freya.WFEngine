@@ -21,7 +21,7 @@ namespace Freya.WFEngine.TestApp
 
         public void Invoke() {
             Console.Beep();
-            this.Context.State = ExitState;
+            this.UpdateState();
         }
     }
 }

@@ -15,18 +15,18 @@ using System.Xml;
 
 namespace Freya.WFEngine
 {
-    public class CompositeXmlComponentFactory<TComponent> : IXmlComponentFactory<TComponent>
+    public class CompositeComponentFactory<TComponent> : IComponentFactory<TComponent>
     {
-        private readonly List<IXmlComponentFactory<TComponent>> factories = new List<IXmlComponentFactory<TComponent>>();
+        private readonly List<IComponentFactory<TComponent>> factories = new List<IComponentFactory<TComponent>>();
 
-        public void Register(IXmlComponentFactory<TComponent> componentFactory) {
+        public void Register(IComponentFactory<TComponent> componentFactory) {
             if (componentFactory == null)
                 throw new ArgumentNullException("componentFactory");
 
             this.factories.Add(componentFactory);
         }
 
-        public void RegisterAll(IEnumerable<IXmlComponentFactory<TComponent>> factoriesEnumeration) {
+        public void RegisterAll(IEnumerable<IComponentFactory<TComponent>> factoriesEnumeration) {
             this.factories.AddRange(factoriesEnumeration);
         }
 
@@ -34,9 +34,9 @@ namespace Freya.WFEngine
             return this.factories.Any(f => f.CanHandle(activityType));
         }
 
-        public TComponent CreateComponent(Type componentType, XmlElement configuration) {
-            IXmlComponentFactory<TComponent> factory = this.factories.First(f => f.CanHandle(componentType));
-            return factory.CreateComponent(componentType, configuration);
+        public TComponent CreateComponent(Type componentType, IDictionary<string, object> parameters) {
+            IComponentFactory<TComponent> factory = this.factories.First(f => f.CanHandle(componentType));
+            return factory.CreateComponent(componentType, parameters);
         }
     }
 }
