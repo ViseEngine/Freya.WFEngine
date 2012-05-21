@@ -17,6 +17,10 @@ using Castle.DynamicProxy;
 
 namespace Freya.WFEngine
 {
+    /// <summary>
+    /// Provides information about a specific workflow and allows you to build one.
+    /// </summary>
+    /// <typeparam name="TItem">Type of item the workflow is tailored to.</typeparam>
     public class Workflow<TItem>
     {
         #region ctor
@@ -69,7 +73,6 @@ namespace Freya.WFEngine
         public CompositeComponentFactory<IGuard<TItem>> GuardFactory {
             get; private set;
         }
-
         #endregion
 
         #region Methods
@@ -93,7 +96,7 @@ namespace Freya.WFEngine
         /// <param name="activityType">activity type</param>
         /// <param name="activityName">activity name</param>
         /// <param name="guardType">guard type</param>
-        /// <param name="configuration">guard configuration</param>
+        /// <param name="parameters">guard parameters used in instantiating</param>
         public void AddGuard(string state, Type activityType, string activityName, Type guardType, IDictionary<string, object> parameters)
         {
             #region parameter check
@@ -136,6 +139,10 @@ namespace Freya.WFEngine
         /// <summary>
         /// Adds an activity for the specified <paramref name="state"/>.
         /// </summary>
+        /// <param name="state">state name</param>
+        /// <param name="activityType">type of the activity</param>
+        /// <param name="parameters">activity parameters</param>
+        /// <param name="activityName">activity name (optional)</param>
         public void AddActivity(string state, Type activityType, IDictionary<string, object> parameters, string activityName = null)
         {
             #region Param check
