@@ -28,20 +28,36 @@ namespace Freya.WFEngine
             this.configurations.Add(workflowConfiguration);
         }
 
+        /// <summary>
+        /// Adds activity type definition.
+        /// </summary>
+        /// <param name="activityNodeName">name of the xml element.</param>
+        /// <param name="activityType">activity type</param>
         public void AddActivityDefinition(string activityNodeName, Type activityType) {
             AddTypeDefinition(activityNodeName, activityType, this.activityTypes);
         }
 
+        /// <summary>
+        /// Adds activity guard type definition.
+        /// </summary>
+        /// <param name="guardNodeName">name of the xml element</param>
+        /// <param name="guardType">activity guard type</param>
         public void AddGuardDefinition(string guardNodeName, Type guardType) {
             AddTypeDefinition(guardNodeName, guardType, this.guardTypes);
         }
 
+        /// <summary>
+        /// Adds workflow configuration from xml string.
+        /// </summary>
         public void AddXml(string xml) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xml);
             this.Add(xmlDoc.DocumentElement);
         }
 
+        /// <summary>
+        /// Updates the specified workflow according to configuration.
+        /// </summary>
         public void Configure<TItem>(Workflow<TItem> workflow) {
             foreach (var workflowConfiguration in configurations) {
                 this.LoadActivityDefinitions(workflowConfiguration.SelectSingleNode(SR.ActivitiesElementName));
