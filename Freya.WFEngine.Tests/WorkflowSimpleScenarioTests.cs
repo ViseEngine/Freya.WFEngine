@@ -26,8 +26,8 @@ namespace Freya.WFEngine.Tests
             Workflow<WorkflowTests.Item> wf = new Workflow<WorkflowTests.Item>(new WorkflowTests.StateManager());
             Assert.IsTrue(wf.AddState("First"));
             Assert.IsTrue(wf.AddState("Second"));
-            wf.AddActivity("First", typeof(TransitionActivity), WorkflowTests.transitionDefinitionToSecond);
-            wf.AddActivity("Second", typeof(TransitionActivity), WorkflowTests.transitionDefinitionToFirst);
+            wf.AddActivity("First", typeof(TransitionActivity), WorkflowTests.transitionParametersToSecond);
+            wf.AddActivity("Second", typeof(TransitionActivity), WorkflowTests.transitionParametersToFirst);
             WorkflowTests.Item item = new WorkflowTests.Item() {
                                                                    State = "First"
                                                                };

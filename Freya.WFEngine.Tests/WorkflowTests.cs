@@ -19,11 +19,6 @@ namespace Freya.WFEngine.Tests
     [TestFixture]
     public class WorkflowTests
     {
-        static WorkflowTests() {
-            emptyXmlElement = ToXmlElement("<Empty />");
-            transitionDefinitionToFirst = new Dictionary<string, object> { { "exitState", "First" } };
-            transitionDefinitionToSecond = new Dictionary<string, object> { { "exitState", "Second" } };
-        }
 
         #region helper classes
         public class Item
@@ -47,21 +42,9 @@ namespace Freya.WFEngine.Tests
         #endregion
 
         private Workflow<Item> emptyWorkflow;
-        internal static XmlElement emptyXmlElement;
-        internal static IDictionary<string, object> transitionDefinitionToSecond;
-        internal static IDictionary<string, object> transitionDefinitionToFirst;
-
-        [TestFixtureSetUp]
-        public void SetUpFixture() {
-           
-        }
-
-        private static XmlElement ToXmlElement(string xml) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xml);
-            return xmlDoc.DocumentElement;
-        }
-
+        internal static IDictionary<string, object> transitionParametersToFirst = new Dictionary<string, object> { { SingleExitPointActivity.ExitPointParameterName, "First" } };
+        internal static IDictionary<string, object> transitionParametersToSecond = new Dictionary<string, object> { { SingleExitPointActivity.ExitPointParameterName, "Second" } };
+        
         [SetUp]
         public void SetUp() {
             this.emptyWorkflow = new Workflow<Item>(new StateManager());
@@ -111,7 +94,7 @@ namespace Freya.WFEngine.Tests
         public void AddActivity_Adds_Activity() {
             this.emptyWorkflow.AddState("First");
             this.emptyWorkflow.AddState("Second");
-            this.emptyWorkflow.AddActivity("First", typeof(TransitionActivity), transitionDefinitionToSecond);
+            this.emptyWorkflow.AddActivity("First", typeof(TransitionActivity), transitionParametersToSecond);
             Item item = new Item { State = "First" };
             IEnumerable<IActivity> activities = this.emptyWorkflow.GetActivitiesForItem(item);
             Assert.AreEqual(1, activities.Count());
@@ -121,7 +104,7 @@ namespace Freya.WFEngine.Tests
         public void Activities_Are_Proxied() {
             this.emptyWorkflow.AddState("First");
             this.emptyWorkflow.AddState("Second");
-            this.emptyWorkflow.AddActivity("First", typeof(TransitionActivity), transitionDefinitionToSecond);
+            this.emptyWorkflow.AddActivity("First", typeof(TransitionActivity), transitionParametersToSecond);
             Item item = new Item { State = "First" };
             IEnumerable<IActivity> activities = this.emptyWorkflow.GetActivitiesForItem(item);
             IActivity activity = activities.Single();
