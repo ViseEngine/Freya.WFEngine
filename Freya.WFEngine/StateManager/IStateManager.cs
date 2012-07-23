@@ -16,8 +16,14 @@ namespace Freya.WFEngine
 {
     public interface IStateManager<in TItem>
     {
+        /// <summary>
+        /// Returns current state of the specified item
+        /// </summary>
         string GetCurrentState(TItem item);
 
+        /// <summary>
+        /// Sets new state for the specified item
+        /// </summary>
         void ChangeState(TItem item, string newState);
     }
 }

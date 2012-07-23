@@ -66,12 +66,14 @@
     <Compile Include="Compatibility\Tuple2.cs" />
     <Compile Include="CompositeXmlComponentFactory.cs" />
     <Compile Include="Activities\IActivity.cs" />
+    <Compile Include="StateManager\DefaultStateManager.cs" />
     <Compile Include="GuardRegistration.cs" />
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="Guards\IGuard.cs" />
     <Compile Include="InvocationMethodAttribute.cs" />
+    <Compile Include="IStatefulItem.cs" />
     <Compile Include="ITransitionActivity.cs" />
-    <Compile Include="IStateManager.cs" />
+    <Compile Include="StateManager\IStateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.cs" />
     <Compile Include="Activities\Transition\TransitionActivity.cs" />

@@ -17,28 +17,11 @@ using System.Xml;
 
 namespace Freya.WFEngine.TestApp
 {
-    public class Item
-    {
-        public int ID { get; set; }
-        public string CurrentState { get; set; }
-    }
-
-    public class DummyStateManager : IStateManager<Item>
-    {
-        public string GetCurrentState(Item item) {
-            return item.CurrentState;
-        }
-
-        public void ChangeState(Item item, string newState) {
-            item.CurrentState = newState;
-        }
-    }
-
     public class Program
     {
         static void Main(string[] args)
         {
-            Workflow<Item> workflow = new Workflow<Item>(new DummyStateManager());
+            Workflow<Item> workflow = new Workflow<Item>(new DefaultStateManager<Item>());
             XmlConfigurator xmlConfigurator = new XmlConfigurator();
             xmlConfigurator.AddXml(Resources.TypeRegistration);
             xmlConfigurator.AddXml(Resources.Sample);
