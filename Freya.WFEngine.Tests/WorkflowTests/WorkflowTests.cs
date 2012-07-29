@@ -7,17 +7,16 @@
 // See the file LICENSE.txt for details.
 //  
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml;
 using NUnit.Framework;
 
-namespace Freya.WFEngine.Tests
+namespace Freya.WFEngine.Tests.WorkflowTests
 {
     [TestFixture]
-    public class WorkflowTests
+    public class WorkflowTests_
     {
 
         #region helper classes
@@ -50,33 +49,6 @@ namespace Freya.WFEngine.Tests
             this.emptyWorkflow = new Workflow<Item>(new StateManager());
         }
         
-        [Test]
-        public void New_Workflow_Has_No_States() {
-            Assert.AreEqual(0, this.emptyWorkflow.States.Count);
-        }
-
-        [Test]
-        public void AddState_Adds_State() {
-            Assert.AreEqual(0, this.emptyWorkflow.States.Count);
-            Assert.IsTrue(this.emptyWorkflow.AddState("state"));
-            Assert.AreEqual(1, this.emptyWorkflow.States.Count);
-            Assert.AreEqual("state", this.emptyWorkflow.States.First());
-        }
-
-        [Test]
-        public void AddState_Doesnt_Add_Already_Existing_State() {
-            Assert.IsTrue(this.emptyWorkflow.AddState("state"));
-            Assert.IsFalse(this.emptyWorkflow.AddState("state"));
-            Assert.AreEqual(1, this.emptyWorkflow.States.Count);
-        }
-
-        [Test]
-        public void States_Are_Case_Sensitive() {
-            Assert.IsTrue(this.emptyWorkflow.AddState("state"));
-            Assert.IsTrue(this.emptyWorkflow.AddState("State"));
-            Assert.AreEqual(2, this.emptyWorkflow.States.Count);
-        }
-
         [Test]
         [ExpectedException(typeof(ArgumentException))]
         public void AddActivity_Throws_ArgumentException_For_Invalid_StateName() {

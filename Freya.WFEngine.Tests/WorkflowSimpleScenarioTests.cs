@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Freya.WFEngine.Tests.WorkflowTests;
 using NUnit.Framework;
 
 namespace Freya.WFEngine.Tests
@@ -23,12 +24,13 @@ namespace Freya.WFEngine.Tests
         /// </summary>
         [Test]
         public void SimpleScenario1() {
-            Workflow<WorkflowTests.Item> wf = new Workflow<WorkflowTests.Item>(new WorkflowTests.StateManager());
-            Assert.IsTrue(wf.AddState("First"));
-            Assert.IsTrue(wf.AddState("Second"));
-            wf.AddActivity("First", typeof(TransitionActivity), WorkflowTests.transitionParametersToSecond);
-            wf.AddActivity("Second", typeof(TransitionActivity), WorkflowTests.transitionParametersToFirst);
-            WorkflowTests.Item item = new WorkflowTests.Item() {
+            Workflow<WorkflowTests_.Item> wf = new Workflow<WorkflowTests_.Item>(new WorkflowTests_.StateManager());
+            wf.AddState("First");
+            wf.AddState("Second");
+            wf.AddActivity("First", typeof(TransitionActivity), WorkflowTests_.transitionParametersToSecond);
+            wf.AddActivity("Second", typeof(TransitionActivity), WorkflowTests_.transitionParametersToFirst);
+            WorkflowTests_.Item item = new WorkflowTests_.Item()
+            {
                                                                    State = "First"
                                                                };
 

@@ -8,6 +8,7 @@
 //  
 #endregion
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,17 +18,116 @@ namespace Freya.WFEngine
 {
     public class CompositeComponentFactory<TComponent> : IComponentFactory<TComponent>
     {
-        private readonly List<IComponentFactory<TComponent>> factories = new List<IComponentFactory<TComponent>>();
+        #region Helper class
+        public class FactoryList : IList<IComponentFactory<TComponent>>
+        {
+            private readonly CompositeComponentFactory<TComponent> owner;
 
-        public void Register(IComponentFactory<TComponent> componentFactory) {
-            if (componentFactory == null)
-                throw new ArgumentNullException("componentFactory");
+            public FactoryList(CompositeComponentFactory<TComponent> owner) {
+                if (owner == null)
+                    throw new ArgumentNullException("owner");
 
-            this.factories.Add(componentFactory);
+                this.owner = owner;
+            }
+            
+            private List<IComponentFactory<TComponent>> list = new List<IComponentFactory<TComponent>>();
+ 
+            public IEnumerator<IComponentFactory<TComponent>> GetEnumerator() {
+                return list.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() {
+                return GetEnumerator();
+            }
+
+            public void Add(IComponentFactory<TComponent> item) {
+                if (item == null)
+                    throw new ArgumentNullException("item");
+                
+                if (object.ReferenceEquals(owner, item))
+                    throw new ArgumentException("Cannot add self to the collection.");
+
+                list.Add(item);
+            }
+
+            public void AddRange(IEnumerable<IComponentFactory<TComponent>> factories) {
+                if (factories == null)
+                    throw new ArgumentNullException("factories");
+                
+                foreach (var factory in factories) {
+                    this.Add(factory);
+                }
+            }
+
+            public void Clear() {
+                list.Clear();
+            }
+
+            public bool Contains(IComponentFactory<TComponent> item) {
+                return list.Contains(item);
+            }
+
+            public void CopyTo(IComponentFactory<TComponent>[] array, int arrayIndex) {
+                list.CopyTo(array, arrayIndex);
+            }
+
+            public bool Remove(IComponentFactory<TComponent> item) {
+                return list.Remove(item);
+            }
+
+            public int Count {
+                get { return list.Count; }
+            }
+
+            public bool IsReadOnly {
+                get { return false; }
+            }
+
+            public int IndexOf(IComponentFactory<TComponent> item) {
+                return list.IndexOf(item);
+            }
+
+            public void Insert(int index, IComponentFactory<TComponent> item) {
+                if (item == null)
+                    throw new ArgumentNullException("item");
+                
+                list.Insert(index, item);
+            }
+
+            public void RemoveAt(int index) {
+                list.RemoveAt(index);
+            }
+
+            public IComponentFactory<TComponent> this[int index] {
+                get { return list[index]; }
+                set {
+                    if (value == null)
+                        throw new ArgumentNullException("value");
+
+                    list[index] = value;
+                }
+            }
+        }
+        #endregion
+
+        private readonly FactoryList factories;
+
+        public CompositeComponentFactory() {
+            this.factories = new FactoryList(this);
+        } 
+
+        public FactoryList Factories {
+            get { return this.factories; }
         }
 
+        [Obsolete("Use Factories property instead.")]
+        public void Register(IComponentFactory<TComponent> componentFactory) {
+            this.Factories.Add(componentFactory);
+        }
+
+        [Obsolete("Use Factories property instead.")]
         public void RegisterAll(IEnumerable<IComponentFactory<TComponent>> factoriesEnumeration) {
-            this.factories.AddRange(factoriesEnumeration);
+            this.Factories.AddRange(factoriesEnumeration);
         }
 
         public bool CanHandle(Type activityType) {
@@ -35,8 +135,16 @@ namespace Freya.WFEngine
         }
 
         public TComponent CreateComponent(Type componentType, IDictionary<string, object> parameters) {
-            IComponentFactory<TComponent> factory = this.factories.First(f => f.CanHandle(componentType));
-            return factory.CreateComponent(componentType, parameters);
+            if (componentType == null)
+                throw new ArgumentNullException("componentType");
+            
+            for (int index = this.factories.Count - 1; index >= 0; index--) {
+                IComponentFactory<TComponent> factory = this.factories[index];
+                if (factory.CanHandle(componentType))
+                    return factory.CreateComponent(componentType, parameters);
+            }
+
+            throw new NotSupportedException("There is no registered factory for type " + componentType);
         }
     }
 }

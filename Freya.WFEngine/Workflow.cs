@@ -31,7 +31,8 @@ namespace Freya.WFEngine
             this.StateManager = stateManager;
 
             this.ActivityFactory = new CompositeComponentFactory<IActivity>();
-            this.ActivityFactory.Register(new TransitionActivityFactory());
+            this.ActivityFactory.Factories.Add(new DefaultActivityFactory());
+            this.ActivityFactory.Factories.Add(new TransitionActivityFactory());
             
             this.GuardFactory = new CompositeComponentFactory<IGuard<TItem>>();
 
@@ -80,13 +81,12 @@ namespace Freya.WFEngine
         /// Adds a state to the workflow.
         /// </summary>
         /// <returns><c>true</c> when the state is added, <c>false</c> when the state has been already registered.</returns>
-        public bool AddState(string stateName) {
+        public void AddState(string stateName) {
             if (this.activities.ContainsKey(stateName) == false) {
                 this.activities.Add(stateName, new List<ActivityRegistration>());
-                return true;
+            } else {
+                throw new ArgumentException(string.Format("State {0} is already registered.", stateName));
             }
-
-            return false;
         }
 
         /// <summary>

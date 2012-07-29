@@ -66,6 +66,7 @@
     <Compile Include="Compatibility\Tuple2.cs" />
     <Compile Include="CompositeXmlComponentFactory.cs" />
     <Compile Include="Activities\IActivity.cs" />
+    <Compile Include="Activities\DefaultActivityFactory.cs" />
     <Compile Include="StateManager\DefaultStateManager.cs" />
     <Compile Include="GuardRegistration.cs" />
     <Compile Include="IComponentFactory.cs" />
