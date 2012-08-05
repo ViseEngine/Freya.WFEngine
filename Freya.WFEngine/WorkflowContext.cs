@@ -14,9 +14,9 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    public class WorkflowContext<TItem>
+    public class WorkflowContext
     {
-        public WorkflowContext(Workflow<TItem> workflow, TItem item, string activityName, Type activityType, string state) {
+        public WorkflowContext(IWorkflow workflow, object item, string activityName, Type activityType, string state) {
             this.Workflow = workflow;
             this.Item = item;
             this.ActivityName = activityName;
@@ -28,10 +28,10 @@ namespace Freya.WFEngine
         
         public Type ActivityType { get; private set; }
         
-        public TItem Item { get; private set; }
+        public object Item { get; private set; }
 
         public string State { get; private set; }
 
-        public Workflow<TItem> Workflow { get; private set; }
+        public IWorkflow Workflow { get; private set; }
     }
 }

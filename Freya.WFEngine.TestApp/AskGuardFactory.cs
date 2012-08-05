@@ -15,15 +15,15 @@ using System.Xml;
 
 namespace Freya.WFEngine.TestApp
 {
-    public class AskGuardFactory<TItem> : IComponentFactory<IGuard<TItem>>
+    public class AskGuardFactory : IComponentFactory<IGuard>
     {
         public bool CanHandle(Type componentType) {
-            return componentType == typeof (AskGuard<TItem>);
+            return componentType == typeof (AskGuard);
         }
 
-        public IGuard<TItem> CreateComponent(Type componentType, IDictionary<string, object> configuration) {
+        public IGuard CreateComponent(Type componentType, IDictionary<string, object> configuration) {
             string question = (string) configuration["question"];
-            return new AskGuard<TItem>(question);
+            return new AskGuard(question);
         }
     }
 }

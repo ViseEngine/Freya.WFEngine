@@ -14,7 +14,7 @@ using System.Text;
 
 namespace Freya.WFEngine.TestApp
 {
-    public class AskGuard<TItem> : IGuard<TItem>
+    public class AskGuard : IGuard
     {
         public AskGuard(string question) {
             this.question = question;
@@ -22,7 +22,7 @@ namespace Freya.WFEngine.TestApp
 
         private readonly string question;
 
-        public bool Check(WorkflowContext<TItem> item) {
+        public bool Check(WorkflowContext context) {
             Console.WriteLine(question);
             while (true) {
                 ConsoleKey consoleKey = Console.ReadKey(true).Key;

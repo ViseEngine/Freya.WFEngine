@@ -27,8 +27,8 @@ namespace Freya.WFEngine
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            if (type.IsGenericType == false || typeof(IGuard<>).IsAssignableFrom(type.GetGenericTypeDefinition()) == false)
-                throw new ArgumentException("Parameter type must be a subtype of IGuard<>.", "type");
+            if (typeof(IGuard).IsAssignableFrom(type) == false)
+                throw new ArgumentException("Parameter type must be a subtype of IGuard.", "type");
             
             this.Type = type;
             this.Parameters = parameters ?? new Dictionary<string, object>();

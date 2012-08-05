@@ -9,6 +9,13 @@ namespace Freya.WFEngine.Tests.GuardDescriptionTests
     [TestFixture]
     public class Tests
     {
+        public class TestGuard : IGuard
+        {
+            public bool Check(WorkflowContext item) {
+                throw new NotImplementedException();
+            }
+        }
+
         [ExpectedException(typeof(ArgumentNullException))]
         [Test]
         public void Ctor_Throws_Argn_On_Null_Type() {
@@ -23,7 +30,7 @@ namespace Freya.WFEngine.Tests.GuardDescriptionTests
 
         [Test]
         public void Ctor_Accepts_Generic_IGuard_Type() {
-            new GuardDescription(typeof (IGuard<object>));
+            new GuardDescription(typeof (TestGuard));
         }
     }
 }

@@ -14,8 +14,8 @@ using System.Text;
 
 namespace Freya.WFEngine
 {
-    public interface IGuard<TItem>
+    public interface IGuard
     {
-        bool Check(WorkflowContext<TItem> item);
+        bool Check(WorkflowContext context);
     }
 }

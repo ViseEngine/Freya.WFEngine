@@ -68,6 +68,7 @@
     <Compile Include="Activities\IActivity.cs" />
     <Compile Include="Activities\DefaultActivityFactory.cs" />
     <Compile Include="GuardDescription.cs" />
+    <Compile Include="IWorkflow.cs" />
     <Compile Include="StateManager\DefaultStateManager.cs" />
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="Guards\IGuard.cs" />

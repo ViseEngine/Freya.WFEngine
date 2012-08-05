@@ -21,7 +21,7 @@ namespace Freya.WFEngine
     /// Provides information about a specific workflow and allows you to build one.
     /// </summary>
     /// <typeparam name="TItem">Type of item the workflow is tailored to.</typeparam>
-    public class Workflow<TItem>
+    public class Workflow<TItem> : IWorkflow
     {
         #region ctor
         public Workflow(IStateManager<TItem> stateManager) {
@@ -34,7 +34,7 @@ namespace Freya.WFEngine
             this.ActivityFactory.Factories.Add(new DefaultActivityFactory());
             this.ActivityFactory.Factories.Add(new TransitionActivityFactory());
             
-            this.GuardFactory = new CompositeComponentFactory<IGuard<TItem>>();
+            this.GuardFactory = new CompositeComponentFactory<IGuard>();
 
             this.proxyGenerator = new ProxyGenerator();
             this.interceptors = new IInterceptor[] { new WorkflowInterceptor<TItem>(this) };
@@ -49,6 +49,11 @@ namespace Freya.WFEngine
         #endregion
 
         #region Properties
+
+        IStateManager<object> IWorkflow.StateManager {
+            get { return (IStateManager<object>) this.StateManager; }
+        } 
+
         /// <summary>
         /// Gets the item state manager.
         /// </summary>
@@ -71,7 +76,7 @@ namespace Freya.WFEngine
         /// <summary>
         /// Gets the activity guard factory.
         /// </summary>
-        public CompositeComponentFactory<IGuard<TItem>> GuardFactory {
+        public CompositeComponentFactory<IGuard> GuardFactory {
             get; private set;
         }
         #endregion
@@ -115,8 +120,8 @@ namespace Freya.WFEngine
                 guardType = guardType.MakeGenericType(typeof (TItem));
             }
             
-            if (typeof(IGuard<TItem>).IsAssignableFrom(guardType) == false) {
-                throw new ArgumentException(string.Format("Guard type must be subtype of IGuard<{0}>", typeof(TItem).FullName));
+            if (typeof(IGuard).IsAssignableFrom(guardType) == false) {
+                throw new ArgumentException(string.Format("Guard type must be subtype of IGuard"));
             }
                 
 
@@ -166,6 +171,10 @@ namespace Freya.WFEngine
             this.activities[state].Add(ar);
         }
 
+        IEnumerable<IActivity> IWorkflow.GetActivitiesForItem(object item) {
+            return this.GetActivitiesForItem((TItem) item);
+        } 
+
         /// <summary>
         /// Returns all invokable activities for the specified <paramref name="item"/>.
         /// </summary>
@@ -176,6 +185,10 @@ namespace Freya.WFEngine
             IEnumerable<ActivityRegistration> activityRegistrations = FilterByGuards(this.activities[currentState], item, currentState);
 
             return activityRegistrations.Select(activityRegistration => CreateActivity(activityRegistration, item, currentState));
+        }
+
+        IEnumerable<TActivity> IWorkflow.GetActivitiesForItem<TActivity>(object item) {
+            return this.GetActivitiesForItem<TActivity>((TItem) item);
         }
 
         /// <summary>
@@ -206,7 +219,7 @@ namespace Freya.WFEngine
 
         private IEnumerable<ActivityRegistration> FilterByGuards(IEnumerable<ActivityRegistration> activityRegistrations, TItem item, string state) {
             return activityRegistrations.Where(ar => ar.Guards.All(gr => {
-                                                                       WorkflowContext<TItem> context = new WorkflowContext<TItem>(this, item, ar.Name, ar.Type, state);
+                                                                       WorkflowContext context = new WorkflowContext(this, item, ar.Name, ar.Type, state);
                                                                        return this.GuardFactory.CreateComponent(gr.Type, gr.Parameters).Check(context);
                                                                    }));
         }
