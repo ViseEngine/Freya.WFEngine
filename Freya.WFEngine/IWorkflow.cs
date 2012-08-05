@@ -8,7 +8,7 @@ namespace Freya.WFEngine
         /// <summary>
         /// Gets the item state manager.
         /// </summary>
-        IStateManager<object> StateManager { get; }
+        IStateManager StateManager { get; }
 
         /// <summary>
         /// Gets registered workflow states.

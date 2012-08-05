@@ -24,25 +24,25 @@ namespace Freya.WFEngine.Tests
         /// </summary>
         [Test]
         public void SimpleScenario1() {
-            Workflow<WorkflowTests_.Item> wf = new Workflow<WorkflowTests_.Item>(new WorkflowTests_.StateManager());
+            Workflow<WorkflowTests_.Item> wf = new Workflow<WorkflowTests_.Item>(new DefaultStateManager<WorkflowTests_.Item>());
             State firstState = wf.States.Add("First");
             firstState.Activities.Add(new ActivityDescription(typeof(TransitionActivity), null, WorkflowTests_.transitionParametersToSecond));
             State secondState = wf.States.Add("Second");
             secondState.Activities.Add(new ActivityDescription(typeof(TransitionActivity), null, WorkflowTests_.transitionParametersToFirst));
             WorkflowTests_.Item item = new WorkflowTests_.Item() {
-                                                                     State = "First"
+                                                                     CurrentState = "First"
                                                                  };
 
             var activities = wf.GetActivitiesForItem(item).ToArray();
             Assert.AreEqual(1, activities.Length);
             activities.Cast<ITransitionActivity>().Single().Invoke();
 
-            Assert.AreEqual("Second", item.State);
+            Assert.AreEqual("Second", item.CurrentState);
 
             activities = wf.GetActivitiesForItem(item).ToArray();
             Assert.AreEqual(1, activities.Length);
             activities.Cast<ITransitionActivity>().Single().Invoke();
-            Assert.AreEqual("First", item.State);
+            Assert.AreEqual("First", item.CurrentState);
         }
     }
 }

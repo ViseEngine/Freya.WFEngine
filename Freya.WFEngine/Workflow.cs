@@ -50,8 +50,8 @@ namespace Freya.WFEngine
 
         #region Properties
 
-        IStateManager<object> IWorkflow.StateManager {
-            get { return (IStateManager<object>) this.StateManager; }
+        IStateManager IWorkflow.StateManager {
+            get { return this.StateManager; }
         } 
 
         /// <summary>

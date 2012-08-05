@@ -20,24 +20,15 @@ namespace Freya.WFEngine.Tests.WorkflowTests
     {
 
         #region helper classes
-        public class Item
+        public class Item : IStatefulItem
         {
             public int ID { get; set; }
-            public string State { get; set; }
-        }
 
-        public class StateManager : IStateManager<Item>
-        {
-            public string GetCurrentState(Item item) {
-                return item.State;
-            }
-
-            public void ChangeState(Item item, string newState) {
-                item.State = newState;
+            public string CurrentState {
+                get; set;
             }
         }
 
-        
         #endregion
 
         private Workflow<Item> emptyWorkflow;
@@ -46,7 +37,7 @@ namespace Freya.WFEngine.Tests.WorkflowTests
         
         [SetUp]
         public void SetUp() {
-            this.emptyWorkflow = new Workflow<Item>(new StateManager());
+            this.emptyWorkflow = new Workflow<Item>(new DefaultStateManager<Item>());
         }
         
         [Test]
@@ -54,9 +45,8 @@ namespace Freya.WFEngine.Tests.WorkflowTests
             
             State firstState = this.emptyWorkflow.States.Add("First");
             firstState.Activities.Add(new ActivityDescription(typeof(TransitionActivity), null, transitionParametersToSecond));
-            State secondState = this.emptyWorkflow.States.Add("Second");
-
-            Item item = new Item { State = "First" };
+            
+            Item item = new Item { CurrentState= "First" };
             IEnumerable<IActivity> activities = this.emptyWorkflow.GetActivitiesForItem(item);
             IActivity activity = activities.Single();
             Assert.IsNotNull(activity.BaseActivity);

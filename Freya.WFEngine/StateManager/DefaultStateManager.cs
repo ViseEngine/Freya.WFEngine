@@ -10,8 +10,16 @@ namespace Freya.WFEngine
     /// </summary>
     public class DefaultStateManager<TItem> : IStateManager<TItem> where TItem : IStatefulItem
     {
+        string IStateManager.GetCurrentState(object item) {
+            return GetCurrentState((TItem) item);
+        }
+
         public virtual string GetCurrentState(TItem item) {
             return item.CurrentState;
+        }
+
+        void IStateManager.ChangeState(object item, string newState) {
+            ChangeState((TItem) item, newState);
         }
 
         public virtual void ChangeState(TItem item, string newState) {
