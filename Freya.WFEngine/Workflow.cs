@@ -127,11 +127,8 @@ namespace Freya.WFEngine
             if (activityRegistration == null)
                 throw new ArgumentException(string.Format("No matching activity found for type {0} and name '{1}'", activityType, activityName));
             #endregion
-            
-            GuardRegistration guardRegistration = new GuardRegistration {
-                                                                            Parameters = parameters,
-                                                                            Type = guardType
-                                                                        };
+
+            GuardDescription guardRegistration = new GuardDescription(guardType, parameters);
 
             activityRegistration.Guards.Add(guardRegistration);
         }

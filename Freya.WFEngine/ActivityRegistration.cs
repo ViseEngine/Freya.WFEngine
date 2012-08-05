@@ -18,7 +18,7 @@ namespace Freya.WFEngine
     internal class ActivityRegistration
     {
         public ActivityRegistration() {
-            this.Guards = new List<GuardRegistration>();
+            this.Guards = new List<GuardDescription>();
         }
 
         public ActivityRegistration(Type type, IDictionary<string, object> parameters, string name) : this() {
@@ -36,6 +36,6 @@ namespace Freya.WFEngine
 
         public IDictionary<string, object> Parameters { get; set; }
  
-        public List<GuardRegistration> Guards { get; private set; } 
+        public List<GuardDescription> Guards { get; private set; } 
     }
 }
