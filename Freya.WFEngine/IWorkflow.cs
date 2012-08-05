@@ -13,7 +13,7 @@ namespace Freya.WFEngine
         /// <summary>
         /// Gets registered workflow states.
         /// </summary>
-        ICollection<string> States { get; }
+        StateSet States { get; }
 
         /// <summary>
         /// Gets the activity factory.
@@ -24,21 +24,6 @@ namespace Freya.WFEngine
         /// Gets the activity guard factory.
         /// </summary>
         CompositeComponentFactory<IGuard> GuardFactory { get; }
-
-        /// <summary>
-        /// Adds a state to the workflow.
-        /// </summary>
-        /// <returns><c>true</c> when the state is added, <c>false</c> when the state has been already registered.</returns>
-        void AddState(string stateName);
-
-        /// <summary>
-        /// Adds an activity for the specified <paramref name="state"/>.
-        /// </summary>
-        /// <param name="state">state name</param>
-        /// <param name="activityType">type of the activity</param>
-        /// <param name="parameters">activity parameters</param>
-        /// <param name="activityName">activity name (optional)</param>
-        ActivityDescription AddActivity(string state, Type activityType, IDictionary<string, object> parameters, string activityName = null);
 
         /// <summary>
         /// Returns all invokable activities for the specified <paramref name="item"/>.

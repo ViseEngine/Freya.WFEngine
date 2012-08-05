@@ -50,33 +50,12 @@ namespace Freya.WFEngine.Tests.WorkflowTests
         }
         
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void AddActivity_Throws_ArgumentException_For_Invalid_StateName() {
-            this.emptyWorkflow.AddActivity("state", typeof(TransitionActivity), null);
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void AddActivity_Throws_ArgumentException_For_Invalid_Activity_Type() {
-            this.emptyWorkflow.AddState("state");
-            this.emptyWorkflow.AddActivity("state", typeof(Type), null);
-        }
-
-        [Test]
-        public void AddActivity_Adds_Activity() {
-            this.emptyWorkflow.AddState("First");
-            this.emptyWorkflow.AddState("Second");
-            this.emptyWorkflow.AddActivity("First", typeof(TransitionActivity), transitionParametersToSecond);
-            Item item = new Item { State = "First" };
-            IEnumerable<IActivity> activities = this.emptyWorkflow.GetActivitiesForItem(item);
-            Assert.AreEqual(1, activities.Count());
-        }
-
-        [Test]
         public void Activities_Are_Proxied() {
-            this.emptyWorkflow.AddState("First");
-            this.emptyWorkflow.AddState("Second");
-            this.emptyWorkflow.AddActivity("First", typeof(TransitionActivity), transitionParametersToSecond);
+            
+            State firstState = this.emptyWorkflow.States.Add("First");
+            firstState.Activities.Add(new ActivityDescription(typeof(TransitionActivity), null, transitionParametersToSecond));
+            State secondState = this.emptyWorkflow.States.Add("Second");
+
             Item item = new Item { State = "First" };
             IEnumerable<IActivity> activities = this.emptyWorkflow.GetActivitiesForItem(item);
             IActivity activity = activities.Single();

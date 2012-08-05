@@ -69,6 +69,7 @@
     <Compile Include="Activities\DefaultActivityFactory.cs" />
     <Compile Include="GuardDescription.cs" />
     <Compile Include="IWorkflow.cs" />
+    <Compile Include="States\State.cs" />
     <Compile Include="StateManager\DefaultStateManager.cs" />
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="Guards\IGuard.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="SR.cs" />
     <Compile Include="Activities\Transition\TransitionActivity.cs" />
     <Compile Include="Activities\Transition\TransitionActivityFactory.cs" />
+    <Compile Include="States\StateSet.cs" />
     <Compile Include="Workflow.cs" />
     <Compile Include="WorkflowContext.cs" />
     <Compile Include="WorkflowInterceptor.cs" />

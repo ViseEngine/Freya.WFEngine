@@ -79,7 +79,7 @@ namespace Freya.WFEngine
                 string name = node.GetAttribute("name");
                 string typeName = node.GetAttribute("type");
 
-                Type type = Type.GetType(typeName);
+                Type type = Type.GetType(typeName, true);
 
                 AddTypeDefinition(name, type, dictionary);
             }
@@ -112,7 +112,7 @@ namespace Freya.WFEngine
             {
                 // state
                 string stateName = xmlState.GetAttribute("name");
-                workflow.AddState(stateName);
+                State state = workflow.States.Add(stateName);
 
                 foreach (var activity in xmlState.ChildNodes.Cast<XmlElement>())
                 {
@@ -125,7 +125,8 @@ namespace Freya.WFEngine
                     string activityName = activity.GetAttribute("name");
                     Type activityType = this.activityTypes[activityTypeName];
                     IDictionary<string, object> parameters = activity.Attributes.Cast<XmlAttribute>().ToDictionary(xa => xa.Name, xa => (object) xa.Value);
-                    ActivityDescription activityDescription = workflow.AddActivity(stateName, activityType, parameters, activityName);
+                    ActivityDescription activityDescription = new ActivityDescription(activityType, activityName, parameters);
+                    state.Activities.Add(activityDescription);
 
                     foreach (var guard in activity.ChildNodes.Cast<XmlElement>()) {
                         // guard

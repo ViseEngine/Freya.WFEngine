@@ -6,6 +6,6 @@
     <Add name="Beep" type="Freya.WFEngine.TestApp.BeepActivity, Freya.WFEngine.TestApp" />
   </Activities>
   <Guards>
-    <Add name="Ask" type="Freya.WFEngine.TestApp.AskGuard`1, Freya.WFEngine.TestApp" />
+    <Add name="Ask" type="Freya.WFEngine.TestApp.AskGuard, Freya.WFEngine.TestApp" />
   </Guards>
 </Workflow>
