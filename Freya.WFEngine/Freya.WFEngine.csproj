@@ -57,7 +57,7 @@
     <Compile Include="Activities\Transition\AutoTransitionActivity.cs" />
     <Compile Include="ActivityContext.cs" />
     <Compile Include="ActivityProxyGenerationHook.cs" />
-    <Compile Include="ActivityRegistration.cs" />
+    <Compile Include="ActivityDescription.cs" />
     <Compile Include="Compatibility\IStructuralComparable.cs" />
     <Compile Include="Compatibility\IStructuralEquatable.cs" />
     <Compile Include="Compatibility\ITuple.cs" />

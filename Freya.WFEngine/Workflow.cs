@@ -42,7 +42,7 @@ namespace Freya.WFEngine
         #endregion
 
         #region Fields
-        private readonly IDictionary<string, List<ActivityRegistration>> activities = new Dictionary<string, List<ActivityRegistration>>(StringComparer.InvariantCulture);
+        private readonly IDictionary<string, List<ActivityDescription>> activities = new Dictionary<string, List<ActivityDescription>>(StringComparer.InvariantCulture);
         private readonly ProxyGenerationOptions proxyGenerationOptions = new ProxyGenerationOptions(ActivityProxyGenerationHook.DefaultInstance);
         private readonly ProxyGenerator proxyGenerator;
         private readonly IInterceptor[] interceptors;
@@ -88,7 +88,7 @@ namespace Freya.WFEngine
         /// <returns><c>true</c> when the state is added, <c>false</c> when the state has been already registered.</returns>
         public void AddState(string stateName) {
             if (this.activities.ContainsKey(stateName) == false) {
-                this.activities.Add(stateName, new List<ActivityRegistration>());
+                this.activities.Add(stateName, new List<ActivityDescription>());
             } else {
                 throw new ArgumentException(string.Format("State {0} is already registered.", stateName));
             }
@@ -128,14 +128,14 @@ namespace Freya.WFEngine
             if (this.activities.ContainsKey(state) == false)
                 throw new ArgumentException(string.Format("State '{0}' has not been registered.", state), "state");
 
-            ActivityRegistration activityRegistration = activities[state].SingleOrDefault(ar => ar.Type == activityType && ar.Name == activityName);
-            if (activityRegistration == null)
+            ActivityDescription activityDescription = activities[state].SingleOrDefault(ar => ar.Type == activityType && ar.Name == activityName);
+            if (activityDescription == null)
                 throw new ArgumentException(string.Format("No matching activity found for type {0} and name '{1}'", activityType, activityName));
             #endregion
 
             GuardDescription guardRegistration = new GuardDescription(guardType, parameters);
 
-            activityRegistration.Guards.Add(guardRegistration);
+            activityDescription.Guards.Add(guardRegistration);
         }
 
         /// <summary>
@@ -145,30 +145,31 @@ namespace Freya.WFEngine
         /// <param name="activityType">type of the activity</param>
         /// <param name="parameters">activity parameters</param>
         /// <param name="activityName">activity name (optional)</param>
-        public void AddActivity(string state, Type activityType, IDictionary<string, object> parameters, string activityName = null)
+        public ActivityDescription AddActivity(string state, Type activityType, IDictionary<string, object> parameters, string activityName = null)
         {
+            ActivityDescription ar = new ActivityDescription(activityType, activityName, parameters);
+            this.AddActivity(state, ar);
+            return ar;
+        }
+
+        /// <summary>
+        /// Adds an activity for the specified <paramref name="state"/>.
+        /// </summary>
+        /// <param name="state">state name</param>
+        /// <param name="activityDescription">activity description</param>
+        public void AddActivity(string state, ActivityDescription activityDescription) {
             #region Param check
+            if (activityDescription == null)
+                throw new ArgumentNullException("activityDescription");
+
             if (this.States.Contains(state) == false)
                 throw new ArgumentException(string.Format("State '{0}' has not been registered yet.", state), "state");
 
-            if (this.activities[state].Any(r => r.Name == activityName && r.Type == activityType))
-                throw new ArgumentException(string.Format("Activity with same name and type has been already registered for state {0}", state), "activityName");
-
-            if (activityType == null)
-                throw new ArgumentNullException("activityType");
-
-            if (typeof(IActivity).IsAssignableFrom(activityType) == false)
-                throw new ArgumentException(string.Format("Parameter activityType ({0}) must be a subtype of IActivity interface", activityType.FullName), "activityType");
+            if (this.activities[state].Any(r => r.Name == activityDescription.Name && r.Type == activityDescription.Type))
+                throw new ArgumentException(string.Format("Activity with same name and type has been already registered for state {0}", state), "activityDescription");
             #endregion
 
-
-            ActivityRegistration ar = new ActivityRegistration {
-                                                                   Name = activityName,
-                                                                   Parameters = parameters,
-                                                                   Type = activityType
-                                                               };
-
-            this.activities[state].Add(ar);
+            this.activities[state].Add(activityDescription);
         }
 
         IEnumerable<IActivity> IWorkflow.GetActivitiesForItem(object item) {
@@ -182,7 +183,7 @@ namespace Freya.WFEngine
             string currentState = this.StateManager.GetCurrentState(item);
 
             // check all guards
-            IEnumerable<ActivityRegistration> activityRegistrations = FilterByGuards(this.activities[currentState], item, currentState);
+            IEnumerable<ActivityDescription> activityRegistrations = FilterByGuards(this.activities[currentState], item, currentState);
 
             return activityRegistrations.Select(activityRegistration => CreateActivity(activityRegistration, item, currentState));
         }
@@ -208,16 +209,16 @@ namespace Freya.WFEngine
         /// <summary>
         /// Creates the activity and wraps it in a proxy
         /// </summary>
-        private IActivity CreateActivity(ActivityRegistration activityRegistration, TItem item, string currentState) {
-            IActivity baseActivity = this.ActivityFactory.CreateComponent(activityRegistration.Type, activityRegistration.Parameters);
-            baseActivity.Context = new ActivityContext(activityRegistration.Name, item, currentState);
+        private IActivity CreateActivity(ActivityDescription activityDescription, TItem item, string currentState) {
+            IActivity baseActivity = this.ActivityFactory.CreateComponent(activityDescription.Type, activityDescription.Parameters);
+            baseActivity.Context = new ActivityContext(activityDescription.Name, item, currentState);
 
             Type[] additionalInterfaces = baseActivity.GetType().GetInterfaces();
             
             return (IActivity)proxyGenerator.CreateInterfaceProxyWithTarget(typeof(IActivity), additionalInterfaces, baseActivity, proxyGenerationOptions, this.interceptors);
         }
 
-        private IEnumerable<ActivityRegistration> FilterByGuards(IEnumerable<ActivityRegistration> activityRegistrations, TItem item, string state) {
+        private IEnumerable<ActivityDescription> FilterByGuards(IEnumerable<ActivityDescription> activityRegistrations, TItem item, string state) {
             return activityRegistrations.Where(ar => ar.Guards.All(gr => {
                                                                        WorkflowContext context = new WorkflowContext(this, item, ar.Name, ar.Type, state);
                                                                        return this.GuardFactory.CreateComponent(gr.Type, gr.Parameters).Check(context);
@@ -225,7 +226,7 @@ namespace Freya.WFEngine
         }
 
         private IAutoTriggerActivity FindAutoTriggerActivity(TItem item, string currentState) {
-            IEnumerable<ActivityRegistration> activityRegistrations = this.activities[currentState].Where(ar => typeof (IAutoTriggerActivity).IsAssignableFrom(ar.Type));
+            IEnumerable<ActivityDescription> activityRegistrations = this.activities[currentState].Where(ar => typeof (IAutoTriggerActivity).IsAssignableFrom(ar.Type));
             activityRegistrations = FilterByGuards(activityRegistrations, item, currentState);
 
             return activityRegistrations.Select(ar => CreateActivity(ar, item, currentState)).Cast<IAutoTriggerActivity>().FirstOrDefault();

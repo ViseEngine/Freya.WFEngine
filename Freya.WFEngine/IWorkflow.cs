@@ -48,7 +48,7 @@ namespace Freya.WFEngine
         /// <param name="activityType">type of the activity</param>
         /// <param name="parameters">activity parameters</param>
         /// <param name="activityName">activity name (optional)</param>
-        void AddActivity(string state, Type activityType, IDictionary<string, object> parameters, string activityName = null);
+        ActivityDescription AddActivity(string state, Type activityType, IDictionary<string, object> parameters, string activityName = null);
 
         /// <summary>
         /// Returns all invokable activities for the specified <paramref name="item"/>.
