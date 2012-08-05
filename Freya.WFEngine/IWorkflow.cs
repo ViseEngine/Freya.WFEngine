@@ -32,16 +32,6 @@ namespace Freya.WFEngine
         void AddState(string stateName);
 
         /// <summary>
-        /// Adds an activity guard to the workflow.
-        /// </summary>
-        /// <param name="state">state name</param>
-        /// <param name="activityType">activity type</param>
-        /// <param name="activityName">activity name</param>
-        /// <param name="guardType">guard type</param>
-        /// <param name="parameters">guard parameters used in instantiating</param>
-        void AddGuard(string state, Type activityType, string activityName, Type guardType, IDictionary<string, object> parameters);
-
-        /// <summary>
         /// Adds an activity for the specified <paramref name="state"/>.
         /// </summary>
         /// <param name="state">state name</param>

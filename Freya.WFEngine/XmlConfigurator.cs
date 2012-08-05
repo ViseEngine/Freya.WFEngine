@@ -125,7 +125,7 @@ namespace Freya.WFEngine
                     string activityName = activity.GetAttribute("name");
                     Type activityType = this.activityTypes[activityTypeName];
                     IDictionary<string, object> parameters = activity.Attributes.Cast<XmlAttribute>().ToDictionary(xa => xa.Name, xa => (object) xa.Value);
-                    workflow.AddActivity(stateName, activityType, parameters, activityName);
+                    ActivityDescription activityDescription = workflow.AddActivity(stateName, activityType, parameters, activityName);
 
                     foreach (var guard in activity.ChildNodes.Cast<XmlElement>()) {
                         // guard
@@ -135,8 +135,7 @@ namespace Freya.WFEngine
                             throw new InvalidOperationException(string.Format("Guard type name '{0}' has not been registered.", guardTypeName));
 
                         IDictionary<string, object> guardParameters = guard.Attributes.Cast<XmlAttribute>().ToDictionary(xa => xa.Name, xa => (object) xa.Value);
-
-                        workflow.AddGuard(stateName, activityType, activityName, this.guardTypes[guardTypeName], guardParameters);
+                        activityDescription.Guards.Add(new GuardDescription(this.guardTypes[guardTypeName], guardParameters));
                     }
                 }
             }

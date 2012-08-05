@@ -94,49 +94,7 @@ namespace Freya.WFEngine
             }
         }
 
-        /// <summary>
-        /// Adds an activity guard to the workflow.
-        /// </summary>
-        /// <param name="state">state name</param>
-        /// <param name="activityType">activity type</param>
-        /// <param name="activityName">activity name</param>
-        /// <param name="guardType">guard type</param>
-        /// <param name="parameters">guard parameters used in instantiating</param>
-        public void AddGuard(string state, Type activityType, string activityName, Type guardType, IDictionary<string, object> parameters)
-        {
-            #region parameter check
-
-            if (state == null)
-                throw new ArgumentNullException("state");
-
-            if (activityType == null)
-                throw new ArgumentNullException("activityType");
-
-            if (guardType == null)
-                throw new ArgumentNullException("guardType");
-
-            // autofill generic type arguments
-            if (guardType.IsGenericTypeDefinition && guardType.GetGenericArguments().Length == 1) {
-                guardType = guardType.MakeGenericType(typeof (TItem));
-            }
-            
-            if (typeof(IGuard).IsAssignableFrom(guardType) == false) {
-                throw new ArgumentException(string.Format("Guard type must be subtype of IGuard"));
-            }
-                
-
-            if (this.activities.ContainsKey(state) == false)
-                throw new ArgumentException(string.Format("State '{0}' has not been registered.", state), "state");
-
-            ActivityDescription activityDescription = activities[state].SingleOrDefault(ar => ar.Type == activityType && ar.Name == activityName);
-            if (activityDescription == null)
-                throw new ArgumentException(string.Format("No matching activity found for type {0} and name '{1}'", activityType, activityName));
-            #endregion
-
-            GuardDescription guardRegistration = new GuardDescription(guardType, parameters);
-
-            activityDescription.Guards.Add(guardRegistration);
-        }
+       
 
         /// <summary>
         /// Adds an activity for the specified <paramref name="state"/>.
