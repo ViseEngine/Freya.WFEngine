@@ -86,7 +86,8 @@
     <Compile Include="WorkflowContext.cs" />
     <Compile Include="WorkflowInterceptor.cs" />
     <Compile Include="WorkflowInvocationDelegate.cs" />
-    <Compile Include="XmlConfigurator.cs" />
+    <Compile Include="Xml\XmlConfigurator.cs" />
+    <Compile Include="Xml\XmlParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

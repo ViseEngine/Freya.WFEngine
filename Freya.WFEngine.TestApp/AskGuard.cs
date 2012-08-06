@@ -16,6 +16,9 @@ namespace Freya.WFEngine.TestApp
 {
     public class AskGuard : IGuard
     {
+        public AskGuard() {
+        }
+
         public AskGuard(string question) {
             this.question = question;
         }
@@ -23,7 +26,7 @@ namespace Freya.WFEngine.TestApp
         private readonly string question;
 
         public bool Check(WorkflowContext context) {
-            Console.WriteLine(question);
+            Console.WriteLine(question ?? string.Format("AskGuard: Can execute activity {0} (Y/N)?", context.ActivityName));
             while (true) {
                 ConsoleKey consoleKey = Console.ReadKey(true).Key;
                 switch (consoleKey) {

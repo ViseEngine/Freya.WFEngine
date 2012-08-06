@@ -8,4 +8,16 @@
   <Guards>
     <Add name="Ask" type="Freya.WFEngine.TestApp.AskGuard, Freya.WFEngine.TestApp" />
   </Guards>
+
+  <ActivityGroups>
+    <Add name="RejectOrReopen">
+      <Activities>
+        <Transition name="reject" exitState="Rejected" />
+        <Transition name="reopen" exitState="Open" />
+      </Activities>
+      <Guards>
+        <Ask />
+      </Guards>
+    </Add>
+  </ActivityGroups>
 </Workflow>

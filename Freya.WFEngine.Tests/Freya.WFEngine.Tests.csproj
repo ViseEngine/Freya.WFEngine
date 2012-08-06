@@ -59,6 +59,10 @@
     <Compile Include="WorkflowTests\WhenNewWorkflowIsCreated.cs" />
     <Compile Include="StateSetTests\WhenStateIsAdded.cs" />
     <Compile Include="WorkflowTests\WorkflowTests.cs" />
+    <Compile Include="Xml\XmlParserTests\WhenParsesActivityDescription.cs" />
+    <Compile Include="Xml\XmlParserTests\WhenParsesActivityGroup.cs" />
+    <Compile Include="Xml\XmlParserTests\WhenParsesGuardDescription.cs" />
+    <Compile Include="Xml\XmlParserTests\XmlParserTestsBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Freya.WFEngine\Freya.WFEngine.csproj">
@@ -71,6 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="StateTests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Xml\XmlParserTests\ActivityDescriptionSample.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Xml\XmlParserTests\ActivityGroupDescriptionSample.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

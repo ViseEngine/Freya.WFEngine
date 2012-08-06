@@ -16,6 +16,7 @@ namespace Freya.WFEngine
 {
     internal static class SR
     {
+        public const string ActivityGroupsElementName = "ActivityGroups";
         public const string DefaultExitStateAttributeName = "exitState";
         public const string ActivitiesElementName = "Activities";
         public const string GuardsElementName = "Guards";

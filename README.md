@@ -23,6 +23,22 @@ _Workflow_ describes a business process of an _item_, or rather set of _states_ 
         <Add name="Role" type="MyProject.RoleGuard, MyProject" />
     </Guards>
 
+    <!-- Registers activity groups. These macros can be used in the same way as regular activites. -->
+    <ActivityGroups>
+        <Add name="RejectGroup">
+            <Activities>
+                <!-- Note that guards can be specified for each activity as well -->
+                <Transition name="reject" exitState="rejected" />
+            </Activities>
+
+            <!-- Guards shared for all activities in this group -->
+            <Guards>
+                <Role roles="admin" />
+            </Guards>
+        </Add>
+    </ActivityGroups>
+
+
     <!-- Workflow definition -->
     <States>
         <State name="open">
@@ -33,10 +49,8 @@ _Workflow_ describes a business process of an _item_, or rather set of _states_ 
         </State>
 
         <State name="closed">
-            <!-- Enable transition to 'rejected' for admins only -->
-            <Transition name="Reject" exitState="rejected">
-                <Role roles="admin" />
-            </Transition>
+            <!-- Enable transition to 'rejected' for admins only by calling the activity group -->
+            <RejectGroup />
         </State>
 
         <State name="rejected" />

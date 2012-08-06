@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Add name="FooGroup">
+  <Activities>
+    <BarActivity name="bar">
+      <LocalGuard />
+    </BarActivity>
+  </Activities>
+  <Guards>
+    <SharedGuard />
+  </Guards>
+</Add>

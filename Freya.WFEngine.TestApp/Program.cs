@@ -31,7 +31,7 @@ namespace Freya.WFEngine.TestApp
             workflow.PostInvoke += (sender, activity) => Console.WriteLine("PostInvoke: => {0}", activity.Context.State);
             workflow.PreInvoke += (sender, activity) => Console.WriteLine("PreInvoke ({0}, {1})", activity.GetType().FullName, activity.Context.Name);
 
-            Item i1 = new Item() { ID = 1, CurrentState = "First" };
+            Item i1 = new Item() { ID = 1, CurrentState = "Open" };
             while (true) {
                 Console.WriteLine("Current state: {0}", i1.CurrentState);
                 IActivity[] activities = workflow.GetActivitiesForItem(i1).ToArray();
@@ -44,6 +44,7 @@ namespace Freya.WFEngine.TestApp
                 }
 
                 Console.Write("Which to invoke (1..{0})?", activities.Length);
+                
                 int index = int.Parse(Console.ReadKey().KeyChar.ToString(CultureInfo.InvariantCulture)) - 1;
                 Console.WriteLine();
                 InvokeActivity(activities[index]);

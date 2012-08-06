@@ -22,7 +22,11 @@ namespace Freya.WFEngine.TestApp
         }
 
         public IGuard CreateComponent(Type componentType, IDictionary<string, object> configuration) {
-            string question = (string) configuration["question"];
+
+            string question = configuration.ContainsKey("question")
+                                  ? Convert.ToString(configuration["question"])
+                                  : null;
+
             return new AskGuard(question);
         }
     }

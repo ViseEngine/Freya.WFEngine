@@ -17,11 +17,19 @@ namespace Freya.WFEngine
 {
     public class XmlConfigurator
     {
+        private readonly XmlParser parser;
+
         #region Fields
         private readonly IList<XmlElement> configurations = new List<XmlElement>();
         private readonly IDictionary<string, Type> activityTypes = new Dictionary<string, Type>();
         private readonly IDictionary<string, Type> guardTypes = new Dictionary<string, Type>();
+        private readonly IDictionary<string, IList<ActivityDescription>> activityGroups = new Dictionary<string, IList<ActivityDescription>>(); 
         #endregion
+
+        public XmlConfigurator() {
+            parser = new XmlParser(this.guardTypes, this.activityTypes, this.activityGroups);
+        }
+           
 
         #region Methods
         public void Add(XmlElement workflowConfiguration) {
@@ -62,13 +70,26 @@ namespace Freya.WFEngine
             foreach (var workflowConfiguration in configurations) {
                 this.LoadActivityDefinitions(workflowConfiguration.SelectSingleNode(SR.ActivitiesElementName));
                 this.LoadGuardDefinitions(workflowConfiguration.SelectSingleNode(SR.GuardsElementName));
+                this.LoadActivityGroups(workflowConfiguration.SelectSingleNode(SR.ActivityGroupsElementName));
                 this.LoadStates(workflow, workflowConfiguration.SelectSingleNode(SR.StatesElementName));    
             }
-            
         }
+
+      
+
         #endregion
 
         #region Helper methods
+        private void LoadActivityGroups(XmlNode selectSingleNode) {
+            if (selectSingleNode == null)
+                return;
+            
+            foreach (var xml in selectSingleNode.ChildNodes.Cast<XmlElement>()) {
+                var group = this.parser.ParseActivityGroup(xml);
+                this.activityGroups.Add(group);
+            }
+        }
+
         private static void LoadTypeDefinitions(XmlNode xmlNode, IDictionary<string, Type> dictionary)
         {
             if (xmlNode == null)
@@ -114,30 +135,10 @@ namespace Freya.WFEngine
                 string stateName = xmlState.GetAttribute("name");
                 State state = workflow.States.Add(stateName);
 
-                foreach (var activity in xmlState.ChildNodes.Cast<XmlElement>())
-                {
-                    // activity
-                    string activityTypeName = activity.Name;
-                    // check fox type registration
-                    if (this.activityTypes.ContainsKey(activityTypeName) == false)
-                        throw new InvalidOperationException(string.Format("Activity type name '{0}' has not been registered.", activityTypeName));
-
-                    string activityName = activity.GetAttribute("name");
-                    Type activityType = this.activityTypes[activityTypeName];
-                    IDictionary<string, object> parameters = activity.Attributes.Cast<XmlAttribute>().ToDictionary(xa => xa.Name, xa => (object) xa.Value);
-                    ActivityDescription activityDescription = new ActivityDescription(activityType, activityName, parameters);
-                    state.Activities.Add(activityDescription);
-
-                    foreach (var guard in activity.ChildNodes.Cast<XmlElement>()) {
-                        // guard
-                        string guardTypeName = guard.Name;
-
-                        if (this.guardTypes.ContainsKey(guardTypeName) == false)
-                            throw new InvalidOperationException(string.Format("Guard type name '{0}' has not been registered.", guardTypeName));
-
-                        IDictionary<string, object> guardParameters = guard.Attributes.Cast<XmlAttribute>().ToDictionary(xa => xa.Name, xa => (object) xa.Value);
-                        activityDescription.Guards.Add(new GuardDescription(this.guardTypes[guardTypeName], guardParameters));
-                    }
+                foreach (var activity in xmlState.ChildNodes.Cast<XmlElement>()) {
+                    IEnumerable<ActivityDescription> activityDescriptions = this.parser.ParseActivityDescription(activity);
+                    foreach (var activityDescription in activityDescriptions)
+                        state.Activities.Add(activityDescription);
                 }
             }
         }

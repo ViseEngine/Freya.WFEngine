@@ -1,25 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Workflow>
   <States>
-    <State name="First">
-      <Transition exitState="Second" name="firstActivity" />
+    <State name="Open">
+      <Transition exitState="Closed" name="close" />
+      <Transition exitState="Rejected" name="reject" />
     </State>
     
-    <State name="Second">
-      <Transition exitState="First" name="toFirst">
-        <Ask question="Proceed to First (Y/N)?" />
-      </Transition>
-      <Transition exitState="Third" name="toThird">
-        <Ask question="Proceed to Third (Y/N)?" />
-      </Transition>
+    <State name="Closed">
+      <RejectOrReopen />
     </State>
 
-    <State name="Third">
-      <Beep exitState="Fourth" />
-    </State>
-
-    <State name="Fourth">
-      <Auto exitState="Second" />
+    <State name="Rejected">
+      <Beep />
     </State>
     
   </States>
